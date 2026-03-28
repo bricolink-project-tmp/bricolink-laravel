@@ -64,14 +64,14 @@
                 <label class="block text-xs font-bold tracking-widest text-stone-500 uppercase mb-3">I want to...</label>
                 <div class="grid grid-cols-2 gap-4">
                     <label class="cursor-pointer">
-                        <input type="radio" name="role" value="client" class="peer sr-only" checked>
+                        <input type="radio" name="role" value="client" class="peer sr-only" {{ request('role') !== 'artisan' ? 'checked' : '' }}>
                         <div class="rounded-sm border border-stone-300 bg-white p-4 text-center hover:bg-stone-50 peer-checked:border-amber-600 peer-checked:bg-amber-50 peer-checked:text-amber-900 shadow-sm transition-all focus-within:ring-2 focus-within:ring-amber-600 focus-within:ring-offset-2">
                             <span class="block text-sm font-bold">Hire Artisans</span>
                             <span class="block text-xs text-stone-500 mt-1 font-normal uppercase tracking-wider">Find services</span>
                         </div>
                     </label>
                     <label class="cursor-pointer">
-                        <input type="radio" name="role" value="artisan" class="peer sr-only">
+                        <input type="radio" name="role" value="artisan" class="peer sr-only" {{ request('role') === 'artisan' ? 'checked' : '' }}>
                         <div class="rounded-sm border border-stone-300 bg-white p-4 text-center hover:bg-stone-50 peer-checked:border-amber-600 peer-checked:bg-amber-50 peer-checked:text-amber-900 shadow-sm transition-all focus-within:ring-2 focus-within:ring-amber-600 focus-within:ring-offset-2">
                             <span class="block text-sm font-bold">Be an Artisan</span>
                             <span class="block text-xs text-stone-500 mt-1 font-normal uppercase tracking-wider">Offer services</span>

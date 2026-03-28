@@ -60,10 +60,10 @@
                 Whether you need a master carpenter, a precise electrician, or a creative painter, our platform connects you with reliable, local craftsmen ready to help build and repair.
             </p>
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <a href="{{ route('register') }}" class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-50 bg-stone-900 hover:bg-stone-800 rounded shadow-sm transition-all w-full sm:w-auto">
+                <a href="{{ route('register', ['role' => 'client']) }}" class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-50 bg-stone-900 hover:bg-stone-800 rounded shadow-sm transition-all w-full sm:w-auto">
                     Find an Artisan
                 </a>
-                <a href="{{ route('register') }}" class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-900 bg-transparent border-2 border-stone-900 hover:bg-stone-900 hover:text-stone-50 rounded transition-all w-full sm:w-auto">
+                <a href="{{ route('register', ['role' => 'artisan']) }}" class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-900 bg-transparent border-2 border-stone-900 hover:bg-stone-900 hover:text-stone-50 rounded transition-all w-full sm:w-auto">
                     Join as a Professional
                 </a>
             </div>
