@@ -200,6 +200,11 @@
                     <div class="flex gap-2">
                         <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST" class="flex-1">
                             @csrf
+                            <input type="hidden" name="status" value="canceled">
+                            <button type="submit" class="w-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Decline</button>
+                        </form>
+                        <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST" class="flex-[2]">
+                            @csrf
                             <input type="hidden" name="status" value="in_discussion">
                             <button type="submit" class="w-full bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/30 dark:hover:bg-amber-800/50 text-amber-800 dark:text-amber-500 text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors border border-amber-200 dark:border-amber-800/50 shadow-sm">Chat / Negotiate</button>
                         </form>
@@ -234,11 +239,7 @@
                         @if($job->status === 'artisan_approved')
                             <div class="w-full bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-stone-200 dark:border-stone-700 shadow-inner">Waiting for Client</div>
                         @else
-                            <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="status" value="artisan_approved">
-                                <button type="submit" class="w-full bg-stone-800 hover:bg-stone-900 dark:bg-stone-200 dark:hover:bg-white text-stone-50 dark:text-stone-900 text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Send Final Terms</button>
-                            </form>
+                            <button type="button" onclick="document.getElementById('terms-modal-{{$job->id}}').classList.remove('hidden')" class="w-full bg-stone-800 hover:bg-stone-900 dark:bg-stone-200 dark:hover:bg-white text-stone-50 dark:text-stone-900 text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Send Final Terms</button>
                         @endif
                     </div>
                 </div>
@@ -370,6 +371,37 @@
         </div>
     </div>
     @endif
+
+    <!-- Final Terms Negotiator Modals -->
+    @foreach($user->artisan->bookings as $job)
+    @if(in_array($job->status, ['in_discussion']))
+    <div id="terms-modal-{{$job->id}}" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+        <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+        <div class="relative w-full max-w-md mx-4 glass-card rounded-2xl p-8 shadow-2xl z-10">
+            <h3 class="font-heading text-2xl font-bold text-stone-900 dark:text-stone-100 mb-2">Propose Final Deal</h3>
+            <p class="text-sm text-stone-500 mb-6">Set your final price and terms for {{ $job->user->name }}. They will receive these to review before they officially hire you.</p>
+            
+            <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST">
+                @csrf
+                <input type="hidden" name="status" value="artisan_approved">
+                
+                <div class="mb-5">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-2">Total Price ($)</label>
+                    <input type="number" name="price" step="0.01" min="0" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-4 text-sm text-stone-800 dark:text-stone-200 focus:outline-none focus:border-amber-500 transition-colors" placeholder="e.g. 450.00" required>
+                </div>
+                <div class="mb-8">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-2">Final Details & Timeline</label>
+                    <textarea name="final_terms" rows="4" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-4 text-sm text-stone-800 dark:text-stone-200 focus:outline-none focus:border-amber-500 transition-colors" placeholder="Includes materials. Start date: Nov 12th. Timeline: 2 weeks..." required></textarea>
+                </div>
+                <div class="flex gap-4">
+                    <button type="button" onclick="document.getElementById('terms-modal-{{$job->id}}').classList.add('hidden')" class="flex-1 px-4 py-3 bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 text-xs font-bold uppercase tracking-widest rounded transition-colors shadow-none">Cancel</button>
+                    <button type="submit" class="flex-1 px-4 py-3 bg-amber-700 hover:bg-amber-800 text-stone-50 text-xs font-bold uppercase tracking-widest rounded transition-colors shadow-sm">Send Terms</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+    @endforeach
     
     <script>
         // Setup Icon Display

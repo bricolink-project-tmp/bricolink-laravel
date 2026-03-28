@@ -23,6 +23,16 @@ class BookingController extends Controller
             return back()->withErrors(['This artisan is currently not available for hire.']);
         }
 
+        // Anti-spam check: Does the client already have an active booking with this artisan?
+        $existingJob = Booking::where('user_id', Auth::id())
+            ->where('artisan_id', $artisanId)
+            ->whereNotIn('status', ['canceled', 'completed'])
+            ->first();
+
+        if ($existingJob) {
+            return back()->withErrors(['You already have an active request or job with this artisan. Please wait until it is completed or declined before sending a new one.']);
+        }
+
         // Add the new booking
         Booking::create([
             'user_id' => Auth::id(),
@@ -44,11 +54,22 @@ class BookingController extends Controller
         }
 
         $request->validate([
-            'status' => 'required|in:in_discussion,artisan_approved,artisan_completed',
+            'status' => 'required|in:in_discussion,artisan_approved,artisan_completed,canceled',
+            'price' => 'nullable|required_if:status,artisan_approved|numeric|min:0',
+            'final_terms' => 'nullable|required_if:status,artisan_approved|string|max:1500',
         ]);
+
+        if ($request->status === 'artisan_approved') {
+            $booking->price = $request->price;
+            $booking->final_terms = $request->final_terms;
+        }
 
         $booking->status = $request->status;
         $booking->save();
+
+        if ($request->status === 'canceled') {
+            return back()->with('success', 'You have successfully declined this request.');
+        }
 
         return back()->with('success', 'Job pipeline updated successfully.');
     }
@@ -69,6 +90,24 @@ class BookingController extends Controller
         $booking->save();
 
         return back()->with('success', 'You have successfully hired the artisan for this job!');
+    }
+
+    // Client declines the artisan's final quote -> canceled
+    public function clientDecline(Booking $booking)
+    {
+        // Security check
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($booking->status !== 'artisan_approved') {
+            return back()->withErrors(['You cannot decline this job at this stage.']);
+        }
+
+        $booking->status = 'canceled';
+        $booking->save();
+
+        return back()->with('success', 'You have declined the artisan\'s terms. The job is canceled.');
     }
 
     // Client verifies work is done and leaves rating

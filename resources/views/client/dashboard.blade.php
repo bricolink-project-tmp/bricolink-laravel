@@ -114,10 +114,21 @@
                     <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
                     
                     @if($booking->status === 'artisan_approved')
-                    <form action="{{ route('booking.client.approve', $booking->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Approve & Hire</button>
-                    </form>
+                    <div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded p-4 mb-4">
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-500 mb-1">Final Proposed Terms</div>
+                        <div class="text-sm font-bold text-stone-900 dark:text-stone-100 mb-2">${{ number_format($booking->price, 2) }}</div>
+                        <p class="text-xs text-stone-600 dark:text-stone-400 italic">"{{ $booking->final_terms }}"</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <form action="{{ route('booking.client.decline', $booking->id) }}" method="POST" class="flex-1">
+                            @csrf
+                            <button type="submit" class="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 text-[10px] font-bold uppercase tracking-widest py-3 rounded transition-colors shadow-sm">Decline Terms</button>
+                        </form>
+                        <form action="{{ route('booking.client.approve', $booking->id) }}" method="POST" class="flex-1">
+                            @csrf
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest py-3 rounded transition-colors shadow-sm">Accept & Hire</button>
+                        </form>
+                    </div>
                     @elseif($booking->status === 'artisan_completed')
                     <button onclick="document.getElementById('rating-modal-{{$booking->id}}').classList.remove('hidden')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Verify Work</button>
                     
@@ -235,7 +246,15 @@
                     </div>
 
                     <div class="flex gap-4 mt-6">
-                        @if($artisanUser->artisan->is_available)
+                        @php
+                            $hasActiveRequest = $clientBookings->where('artisan_id', $artisanUser->artisan->artisan_id)->whereNotIn('status', ['canceled', 'completed'])->isNotEmpty();
+                        @endphp
+                        
+                        @if($hasActiveRequest)
+                        <button class="flex-1 bg-stone-300 dark:bg-stone-800 text-stone-500 dark:text-stone-500 text-xs font-bold tracking-widest uppercase py-3 px-2 rounded cursor-not-allowed text-center">
+                            Request Pending
+                        </button>
+                        @elseif($artisanUser->artisan->is_available)
                         <button onclick="document.getElementById('quote-modal-{{$artisanUser->id}}').classList.remove('hidden')" class="flex-1 bg-amber-700 hover:bg-amber-800 dark:bg-amber-700 dark:hover:bg-amber-600 text-white dark:text-stone-950 text-xs font-bold tracking-widest uppercase py-3 px-2 rounded transition-colors shadow-sm dark:shadow-[0_0_15px_rgba(217,119,6,0.2)] dark:hover:shadow-[0_0_20px_rgba(217,119,6,0.4)] text-center">
                             Request Quote
                         </button>

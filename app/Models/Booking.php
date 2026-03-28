@@ -15,6 +15,8 @@ class Booking extends Model
         'scheduled_date',
         'rating',
         'review',
+        'price',
+        'final_terms',
     ];
 
     protected $casts = [

@@ -31,5 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/booking/{artisanId}', [App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
     Route::post('/artisan/booking/{booking}/status', [App\Http\Controllers\BookingController::class, 'artisanStatusUpdate'])->name('booking.artisan.status');
     Route::post('/client/booking/{booking}/approve', [App\Http\Controllers\BookingController::class, 'clientApprove'])->name('booking.client.approve');
+    Route::post('/client/booking/{booking}/decline', [App\Http\Controllers\BookingController::class, 'clientDecline'])->name('booking.client.decline');
     Route::post('/client/booking/{booking}/verify', [App\Http\Controllers\BookingController::class, 'clientVerify'])->name('booking.client.verify');
 });
