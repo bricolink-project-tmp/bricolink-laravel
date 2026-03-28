@@ -46,7 +46,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 rounded bg-gradient-to-br from-amber-600 to-amber-900 flex items-center justify-center text-stone-50 font-heading font-bold text-xl shadow-[0_0_15px_rgba(217,119,6,0.2)] dark:shadow-[0_0_15px_rgba(217,119,6,0.3)] group-hover:shadow-[0_0_20px_rgba(217,119,6,0.4)] transition-all">A</div>
+                    <img src="{{ asset('images/logo.png') }}" alt="Artisan Platform Logo" class="h-10 w-auto rounded shadow-sm">
                     <span class="font-heading text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Artisan <span class="text-amber-700 dark:text-amber-600 italic font-normal">Discover</span></span>
                 </a>
                 <div class="flex items-center space-x-6">
