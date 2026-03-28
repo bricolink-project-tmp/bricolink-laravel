@@ -150,14 +150,29 @@
             <div class="glass-card rounded-lg p-6 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-700/50 transition-colors relative overflow-hidden group shadow-sm dark:shadow-none">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/10 dark:bg-amber-600/10 rounded-full blur-xl group-hover:bg-amber-500/20 dark:group-hover:bg-amber-600/20 transition-all"></div>
                 <div class="text-stone-500 dark:text-stone-400 text-xs font-bold uppercase tracking-widest mb-2">Client Rating</div>
+                @php
+                    $completedWithRatings = $user->artisan->bookings->whereNotNull('rating');
+                    $avgRating = $completedWithRatings->count() > 0 ? round($completedWithRatings->avg('rating'), 1) : 'New';
+                    $reviewCount = $completedWithRatings->count();
+                @endphp
                 <div class="font-heading text-4xl font-bold text-stone-900 dark:text-stone-100 mb-2 flex items-center gap-2">
-                    4.9 <span class="text-amber-500 text-2xl">★</span>
+                    {{ $avgRating }} @if($avgRating !== 'New')<span class="text-amber-500 text-2xl">★</span>@endif
                 </div>
-                <div class="text-stone-500 text-xs">Based on 34 reviews</div>
+                <div class="text-stone-500 text-xs">Based on {{ $reviewCount }} verified reviews</div>
             </div>
         </div>
 
         <!-- Lead Pipeline (Kanban Lite) -->
+        @php
+            $pendingJobs = $user->artisan->bookings->where('status', 'pending');
+            $discussionJobs = $user->artisan->bookings->whereIn('status', ['in_discussion', 'artisan_approved']);
+            $bookedJobs = $user->artisan->bookings->whereIn('status', ['booked', 'artisan_completed']);
+            
+            // Re-calculate new inquiries for KPI card based on real data
+            $newInquiriesCount = $pendingJobs->count();
+            
+            // Re-calculate Rating KPI if we wanted, but not needed for this replacement.
+        @endphp
         <h3 class="text-xs font-bold tracking-widest text-stone-500 dark:text-stone-400 uppercase mb-6 flex items-center">
             <span class="w-4 h-[1px] bg-amber-600 mr-3"></span> Active Job Pipeline
         </h3>
@@ -168,55 +183,106 @@
             <div class="kanban-col rounded-lg p-4 h-full min-h-[400px]">
                 <div class="flex items-center justify-between mb-6 px-2">
                     <span class="text-sm font-bold text-stone-800 dark:text-stone-200">New Inquiries</span>
-                    <span class="bg-amber-100 text-amber-800 dark:bg-amber-600 dark:text-stone-950 border border-amber-200 dark:border-none text-xs font-bold px-2 py-0.5 rounded">1</span>
+                    <span class="bg-amber-100 text-amber-800 dark:bg-amber-600 dark:text-stone-950 border border-amber-200 dark:border-none text-xs font-bold px-2 py-0.5 rounded">{{ $pendingJobs->count() }}</span>
                 </div>
                 
-                <!-- Mock Ticket -->
-                <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 border-l-amber-500 dark:border-l-amber-600 cursor-pointer hover:-translate-y-1 transition-transform">
+                @forelse($pendingJobs as $job)
+                <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 border-l-amber-500 dark:border-l-amber-600 transition-transform">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-[10px] font-bold text-amber-700 dark:text-amber-500 uppercase tracking-widest px-2 py-1 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-none">Quote Request</span>
-                        <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">2h ago</span>
+                        <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($job->created_at)->diffForHumans() }}</span>
                     </div>
-                    <h4 class="font-bold text-stone-900 dark:text-stone-100 mb-2 text-sm">Custom Dining Table</h4>
-                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-4 leading-relaxed">"Hi! I loved your portfolio. I'm looking for a reclaimed wood table..."</p>
-                    <div class="flex items-center gap-2 border-t border-stone-100 dark:border-stone-800 pt-3">
-                        <div class="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[9px] flex items-center justify-center font-bold text-amber-700 dark:text-amber-500">SJ</div>
-                        <span class="text-xs text-stone-600 dark:text-stone-300">Sarah Jenkins</span>
+                    <div class="flex items-center gap-2 mb-3 border-b border-stone-100 dark:border-stone-800 pb-3">
+                        <div class="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[9px] flex items-center justify-center font-bold text-amber-700 dark:text-amber-500">{{ substr($job->user->name, 0, 2) }}</div>
+                        <span class="text-xs font-bold text-stone-900 dark:text-stone-100">{{ $job->user->name }}</span>
+                    </div>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-3 mb-4 leading-relaxed">"{{ $job->description }}"</p>
+                    <div class="flex gap-2">
+                        <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST" class="flex-1">
+                            @csrf
+                            <input type="hidden" name="status" value="in_discussion">
+                            <button type="submit" class="w-full bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/30 dark:hover:bg-amber-800/50 text-amber-800 dark:text-amber-500 text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors border border-amber-200 dark:border-amber-800/50 shadow-sm">Chat / Negotiate</button>
+                        </form>
                     </div>
                 </div>
+                @empty
+                <div class="h-32 flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 border border-stone-300 dark:border-stone-800/50 rounded-lg border-dashed mt-4 bg-stone-50/50 dark:bg-transparent">
+                    <span class="text-xs uppercase tracking-widest font-bold">No new leads</span>
+                </div>
+                @endforelse
             </div>
 
             <!-- Col 2: In Discussion -->
             <div class="kanban-col rounded-lg p-4 h-full min-h-[400px]">
                 <div class="flex items-center justify-between mb-6 px-2">
                     <span class="text-sm font-bold text-stone-800 dark:text-stone-200">In Discussion</span>
-                    <span class="bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-300 text-xs font-bold px-2 py-0.5 rounded">0</span>
+                    <span class="bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-300 text-xs font-bold px-2 py-0.5 rounded">{{ $discussionJobs->count() }}</span>
                 </div>
-                <!-- Empty State -->
+                
+                @forelse($discussionJobs as $job)
+                <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 border-l-stone-500 transition-transform">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[10px] font-bold text-stone-600 dark:text-stone-400 uppercase tracking-widest px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded border border-stone-200 dark:border-none">Active Chat</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-5 h-5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[8px] flex items-center justify-center font-bold text-stone-500">{{ substr($job->user->name, 0, 2) }}</div>
+                        <span class="text-xs font-bold text-stone-900 dark:text-stone-100">{{ $job->user->name }}</span>
+                    </div>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-1 mb-4 italic">"{{ $job->description }}"</p>
+                    
+                    <div class="border-t border-stone-100 dark:border-stone-800 pt-3">
+                        @if($job->status === 'artisan_approved')
+                            <div class="w-full bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-stone-200 dark:border-stone-700 shadow-inner">Waiting for Client</div>
+                        @else
+                            <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="status" value="artisan_approved">
+                                <button type="submit" class="w-full bg-stone-800 hover:bg-stone-900 dark:bg-stone-200 dark:hover:bg-white text-stone-50 dark:text-stone-900 text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Send Final Terms</button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+                @empty
                 <div class="h-32 flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 border border-stone-300 dark:border-stone-800/50 rounded-lg border-dashed mt-4 bg-stone-50/50 dark:bg-transparent">
                     <span class="text-xs uppercase tracking-widest font-bold">No active chats</span>
                 </div>
+                @endforelse
             </div>
 
             <!-- Col 3: Booked Jobs -->
             <div class="kanban-col rounded-lg p-4 h-full min-h-[400px]">
                 <div class="flex items-center justify-between mb-6 px-2">
                     <span class="text-sm font-bold text-stone-800 dark:text-stone-200">Booked Jobs</span>
-                    <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-600 dark:text-stone-50 text-xs font-bold px-2 py-0.5 border border-emerald-200 dark:border-none rounded">1</span>
+                    <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-600 dark:text-stone-50 text-xs font-bold px-2 py-0.5 border border-emerald-200 dark:border-none rounded">{{ $bookedJobs->count() }}</span>
                 </div>
                 
-                <!-- Mock Ticket -->
-                <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 border-l-emerald-500 dark:border-l-emerald-600 cursor-pointer hover:-translate-y-1 transition-transform">
+                @forelse($bookedJobs as $job)
+                <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 border-l-emerald-500 dark:border-l-emerald-600 transition-transform">
                     <div class="flex justify-between items-start mb-3">
-                        <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-500 uppercase tracking-widest px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-none">In Progress</span>
-                        <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">Due Nov 12</span>
+                        <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-500 uppercase tracking-widest px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-none">Active Work</span>
+                        <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">Due {{ \Carbon\Carbon::parse($job->scheduled_date)->format('M d') }}</span>
                     </div>
-                    <h4 class="font-bold text-stone-900 dark:text-stone-100 mb-4 text-sm">Walnut Bookshelf Restoration</h4>
-                    <div class="w-full bg-stone-100 dark:bg-stone-800 rounded-full h-1.5 mb-2 border border-stone-200 dark:border-none">
-                        <div class="bg-emerald-500 h-1.5 rounded-full dark:shadow-[0_0_8px_rgba(16,185,129,0.5)]" style="width: 45%"></div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-xs font-bold text-stone-900 dark:text-stone-100">For {{ $job->user->name }}</span>
                     </div>
-                    <span class="text-[10px] text-stone-500 dark:text-stone-400 uppercase tracking-widest font-bold">45% Complete</span>
+                    
+                    <div class="border-t border-stone-100 dark:border-stone-800 pt-3">
+                        @if($job->status === 'artisan_completed')
+                            <div class="w-full bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded shadow-inner">Delivered / Awaiting Pay</div>
+                        @else
+                            <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="status" value="artisan_completed">
+                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm dark:shadow-[0_0_10px_rgba(16,185,129,0.3)]">Mark Job Complete</button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
+                @empty
+                <div class="h-32 flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 border border-stone-300 dark:border-stone-800/50 rounded-lg border-dashed mt-4 bg-stone-50/50 dark:bg-transparent">
+                    <span class="text-xs uppercase tracking-widest font-bold">No active builds</span>
+                </div>
+                @endforelse
             </div>
 
         </div>

@@ -14,7 +14,7 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if ($user->role === 'artisan') {
-            $user->load('artisan.portfolioImages');
+            $user->load(['artisan.portfolioImages', 'artisan.bookings.user']);
             return view('artisan.dashboard', compact('user'));
         }
 
@@ -26,7 +26,12 @@ class DashboardController extends Controller
             ->sortByDesc(function ($userParam) {
                 return $userParam->artisan->is_available ?? false;
             });
+            
+        $clientBookings = \App\Models\Booking::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->with('artisan.user')
+            ->latest()
+            ->get();
         
-        return view('client.dashboard', compact('user', 'categories', 'artisans'));
+        return view('client.dashboard', compact('user', 'categories', 'artisans', 'clientBookings'));
     }
 }

@@ -13,6 +13,8 @@ class Booking extends Model
         'image_path',
         'status',
         'scheduled_date',
+        'rating',
+        'review',
     ];
 
     protected $casts = [

@@ -69,6 +69,20 @@
     <!-- Main Content -->
     <main class="pt-32 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        <!-- Session Alerts -->
+        @if (session('success'))
+            <div class="bg-emerald-100 border border-emerald-400 text-emerald-800 px-4 py-3 rounded relative mb-6 text-sm" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded relative mb-6 text-sm" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">{{ $errors->first() }}</span>
+            </div>
+        @endif
+
         <!-- Hero Section -->
         <div class="mb-16 text-center max-w-2xl mx-auto">
             <h1 class="font-heading text-5xl font-bold text-stone-900 dark:text-stone-100 mb-4 dark:glow-amber-text">Find Your Master Craftsman</h1>
@@ -82,6 +96,64 @@
             <button class="px-6 py-2 rounded-full border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/50 text-stone-600 dark:text-stone-400 text-xs font-bold tracking-widest uppercase hover:border-amber-700/50 dark:hover:border-amber-600/30 hover:text-stone-900 dark:hover:text-stone-200 transition-colors shadow-sm dark:shadow-none">{{ $category->name }}</button>
             @endforeach
         </div>
+
+        <!-- Active Requests Panel -->
+        @if($clientBookings->count() > 0)
+        <div class="mb-16">
+            <h2 class="text-xs font-bold tracking-widest text-amber-700 dark:text-amber-500 uppercase flex items-center mb-6">
+                <span class="w-4 h-[1px] bg-amber-600 mr-3"></span> Your Active Jobs
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($clientBookings as $booking)
+                <div class="glass-card rounded-lg p-5 border-l-4 {{ $booking->status == 'completed' ? 'border-l-stone-500' : 'border-l-amber-500 dark:border-l-amber-600' }} shadow-sm">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[10px] font-bold text-amber-700 dark:text-amber-500 uppercase tracking-widest px-2 py-1 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-none">{{ str_replace('_', ' ', $booking->status) }}</span>
+                        <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($booking->scheduled_date)->format('M d') }}</span>
+                    </div>
+                    <h4 class="font-bold text-stone-900 dark:text-stone-100 mb-2 truncate">with {{ $booking->artisan->user->name }}</h4>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
+                    
+                    @if($booking->status === 'artisan_approved')
+                    <form action="{{ route('booking.client.approve', $booking->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Approve & Hire</button>
+                    </form>
+                    @elseif($booking->status === 'artisan_completed')
+                    <button onclick="document.getElementById('rating-modal-{{$booking->id}}').classList.remove('hidden')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Verify Work</button>
+                    
+                    <!-- Rating Modal -->
+                    <div id="rating-modal-{{$booking->id}}" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+                        <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+                        <div class="relative w-full max-w-sm mx-4 glass-card rounded-xl p-6 shadow-2xl z-10 text-center">
+                            <h3 class="font-heading text-xl font-bold text-stone-900 dark:text-stone-100 mb-2">Rate {{ $booking->artisan->user->name }}</h3>
+                            <p class="text-xs text-stone-500 mb-6">Your review helps the community find trusted artisans.</p>
+                            <form action="{{ route('booking.client.verify', $booking->id) }}" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <label class="block text-xs font-bold text-left uppercase text-stone-600 dark:text-stone-400 mb-2">Rating (1-5)</label>
+                                    <input type="number" name="rating" min="1" max="5" value="5" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-3 text-sm focus:outline-none focus:border-amber-500 transition-colors">
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-xs font-bold text-left uppercase text-stone-600 dark:text-stone-400 mb-2">Review (Optional)</label>
+                                    <textarea name="review" rows="3" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-3 text-sm focus:outline-none focus:border-amber-500 transition-colors"></textarea>
+                                </div>
+                                <div class="flex gap-3">
+                                    <button type="button" onclick="document.getElementById('rating-modal-{{$booking->id}}').classList.add('hidden')" class="flex-1 bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-bold uppercase tracking-widest py-3 rounded">Cancel</button>
+                                    <button type="submit" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-widest py-3 rounded shadow-sm">Submit Review</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    @elseif($booking->status === 'completed')
+                    <div class="w-full border border-stone-200 dark:border-stone-800 text-center text-emerald-600 dark:text-emerald-500 text-[10px] font-bold uppercase tracking-widest py-2 rounded bg-stone-50 dark:bg-stone-900/50">Done ({{ $booking->rating }} ★)</div>
+                    @else
+                    <div class="w-full border border-stone-200 dark:border-stone-800 text-center text-stone-500 dark:text-stone-400 text-[10px] font-bold uppercase tracking-widest py-2 rounded bg-stone-50 dark:bg-stone-900/50">Awaiting Update</div>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
 
         <!-- Available Now Ribbon -->
         <div class="mb-8 flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-4">
@@ -163,9 +235,15 @@
                     </div>
 
                     <div class="flex gap-4 mt-6">
-                        <button class="flex-1 bg-amber-700 hover:bg-amber-800 dark:bg-amber-700 dark:hover:bg-amber-600 text-white dark:text-stone-950 text-xs font-bold tracking-widest uppercase py-3 px-2 rounded transition-colors shadow-sm dark:shadow-[0_0_15px_rgba(217,119,6,0.2)] dark:hover:shadow-[0_0_20px_rgba(217,119,6,0.4)] text-center">
+                        @if($artisanUser->artisan->is_available)
+                        <button onclick="document.getElementById('quote-modal-{{$artisanUser->id}}').classList.remove('hidden')" class="flex-1 bg-amber-700 hover:bg-amber-800 dark:bg-amber-700 dark:hover:bg-amber-600 text-white dark:text-stone-950 text-xs font-bold tracking-widest uppercase py-3 px-2 rounded transition-colors shadow-sm dark:shadow-[0_0_15px_rgba(217,119,6,0.2)] dark:hover:shadow-[0_0_20px_rgba(217,119,6,0.4)] text-center">
                             Request Quote
                         </button>
+                        @else
+                        <button class="flex-1 bg-stone-300 dark:bg-stone-800 text-stone-500 dark:text-stone-500 text-xs font-bold tracking-widest uppercase py-3 px-2 rounded cursor-not-allowed text-center">
+                            Unavailable
+                        </button>
+                        @endif
                         <button class="flex-1 bg-stone-100 hover:bg-stone-200 dark:bg-transparent dark:hover:bg-transparent border border-stone-300 dark:border-stone-700 hover:border-amber-700 dark:hover:border-amber-600/50 text-stone-800 dark:text-stone-300 hover:text-amber-800 dark:hover:text-amber-500 text-xs font-bold tracking-widest uppercase py-3 px-2 rounded transition-colors text-center">
                             View Work
                         </button>
@@ -175,6 +253,35 @@
             @endforeach
         </div>
     </main>
+
+    <!-- Quote Modals -->
+    @foreach($artisans as $artisanUser)
+    @if($artisanUser->artisan->is_available)
+    <div id="quote-modal-{{$artisanUser->id}}" class="fixed inset-0 z-[100] hidden items-center justify-center flex">
+        <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+        <div class="relative w-full max-w-lg mx-4 glass-card rounded-2xl p-8 shadow-2xl z-10">
+            <h3 class="font-heading text-2xl font-bold text-stone-900 dark:text-stone-100 mb-2">Request Quote from {{ $artisanUser->name }}</h3>
+            <p class="text-sm text-stone-500 mb-6">Describe your project requirements and preferred timeline.</p>
+            
+            <form action="{{ route('booking.store', $artisanUser->id) }}" method="POST">
+                @csrf
+                <div class="mb-5">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-2">Project Description</label>
+                    <textarea name="description" rows="4" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-4 text-sm text-stone-800 dark:text-stone-200 focus:outline-none focus:border-amber-500 transition-colors" placeholder="I need a custom oak dining table..." required></textarea>
+                </div>
+                <div class="mb-8">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-2">Desired Timeline (Date)</label>
+                    <input type="date" name="scheduled_date" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-4 text-sm text-stone-800 dark:text-stone-200 focus:outline-none focus:border-amber-500 transition-colors" required>
+                </div>
+                <div class="flex gap-4">
+                    <button type="button" onclick="document.getElementById('quote-modal-{{$artisanUser->id}}').classList.add('hidden')" class="flex-1 px-4 py-3 bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 text-xs font-bold uppercase tracking-widest rounded transition-colors">Cancel</button>
+                    <button type="submit" class="flex-1 px-4 py-3 bg-amber-700 hover:bg-amber-800 text-stone-50 text-xs font-bold uppercase tracking-widest rounded transition-colors shadow-sm">Send Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+    @endforeach
 
     <script>
         // Setup Icon Display
