@@ -61,12 +61,17 @@
                         class="text-sm font-bold tracking-wider text-stone-600 hover:text-amber-700 transition uppercase">Contact</a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('login') }}"
-                        class="text-sm font-bold tracking-wider text-stone-600 hover:text-amber-700 transition uppercase">Sign
-                        in</a>
-                    <a href="{{ route('register') }}"
-                        class="px-6 py-2.5 text-sm font-bold tracking-wider text-stone-50 bg-amber-700 hover:bg-amber-800 rounded shadow-sm transition-all uppercase">Get
-                        Started</a>
+                    @auth
+                        <a href="{{ url('/dashboard') }}"
+                            class="px-6 py-2.5 text-sm font-bold tracking-wider text-stone-50 bg-amber-700 hover:bg-amber-800 rounded shadow-sm transition-all uppercase">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}"
+                            class="text-sm font-bold tracking-wider text-stone-600 hover:text-amber-700 transition uppercase">Sign
+                            in</a>
+                        <a href="{{ route('register') }}"
+                            class="px-6 py-2.5 text-sm font-bold tracking-wider text-stone-50 bg-amber-700 hover:bg-amber-800 rounded shadow-sm transition-all uppercase">Get
+                            Started</a>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -88,14 +93,21 @@
                 you with reliable, local craftsmen ready to help build and repair.
             </p>
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <a href="{{ route('register', ['role' => 'client']) }}"
-                    class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-50 bg-stone-900 hover:bg-stone-800 rounded shadow-sm transition-all w-full sm:w-auto">
-                    Find an Artisan
-                </a>
-                <a href="{{ route('register', ['role' => 'artisan']) }}"
-                    class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-900 bg-transparent border-2 border-stone-900 hover:bg-stone-900 hover:text-stone-50 rounded transition-all w-full sm:w-auto">
-                    Join as a Professional
-                </a>
+                @auth
+                    <a href="{{ url('/dashboard') }}"
+                        class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-50 bg-stone-900 hover:bg-stone-800 rounded shadow-sm transition-all w-full sm:w-auto">
+                        Return to Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('register', ['role' => 'client']) }}"
+                        class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-50 bg-stone-900 hover:bg-stone-800 rounded shadow-sm transition-all w-full sm:w-auto">
+                        Find an Artisan
+                    </a>
+                    <a href="{{ route('register', ['role' => 'artisan']) }}"
+                        class="px-8 py-4 text-sm font-bold tracking-wider uppercase text-stone-900 bg-transparent border-2 border-stone-900 hover:bg-stone-900 hover:text-stone-50 rounded transition-all w-full sm:w-auto">
+                        Join as a Professional
+                    </a>
+                @endauth
             </div>
         </div>
     </section>
