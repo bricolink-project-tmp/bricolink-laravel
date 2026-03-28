@@ -98,15 +98,48 @@
                 
                 <!-- Left: Profile & Mini Portfolio -->
                 <div class="w-full sm:w-1/3 flex flex-col gap-3">
-                    <div class="aspect-square rounded portfolio-placeholder-1 w-full relative overflow-hidden group-hover:glow-amber transition-all">
-                        <div class="absolute inset-0 flex items-center justify-center opacity-30 dark:opacity-20 text-stone-900 dark:text-stone-100">
-                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    @php $images = $artisanUser->artisan->portfolioImages; @endphp
+                    
+                    @if($images->count() > 0)
+                        <!-- Main Image -->
+                        <div class="aspect-square rounded bg-stone-200 dark:bg-stone-800 w-full relative overflow-hidden group-hover:glow-amber transition-all border border-stone-300 dark:border-stone-800">
+                            <img src="{{ asset('storage/' . $images[0]->image_path) }}" class="w-full h-full object-cover" alt="Portfolio main">
                         </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="aspect-square rounded portfolio-placeholder-2 w-full border border-stone-300 dark:border-stone-800"></div>
-                        <div class="aspect-square rounded portfolio-placeholder-3 w-full border border-stone-300 dark:border-stone-800"></div>
-                    </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            @if($images->count() > 1)
+                                <div class="aspect-square rounded w-full border border-stone-300 dark:border-stone-800 overflow-hidden">
+                                    <img src="{{ asset('storage/' . $images[1]->image_path) }}" class="w-full h-full object-cover" alt="Portfolio piece">
+                                </div>
+                            @else
+                                <div class="aspect-square rounded portfolio-placeholder-2 w-full border border-stone-300 dark:border-stone-800"></div>
+                            @endif
+                            
+                            @if($images->count() > 2)
+                                <div class="aspect-square rounded w-full border border-stone-300 dark:border-stone-800 overflow-hidden relative">
+                                    <img src="{{ asset('storage/' . $images[2]->image_path) }}" class="w-full h-full object-cover" alt="Portfolio piece">
+                                    @if($images->count() > 3)
+                                        <div class="absolute inset-0 bg-stone-900/60 flex items-center justify-center">
+                                            <span class="text-white font-bold text-lg">+{{ $images->count() - 3 }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="aspect-square rounded portfolio-placeholder-3 w-full border border-stone-300 dark:border-stone-800"></div>
+                            @endif
+                        </div>
+                    @else
+                        <!-- Placeholder Fallback -->
+                        <div class="aspect-square rounded portfolio-placeholder-1 w-full relative overflow-hidden group-hover:glow-amber transition-all border border-stone-300 dark:border-stone-800">
+                            <div class="absolute inset-0 flex items-center justify-center opacity-30 dark:opacity-20 text-stone-900 dark:text-stone-100">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="aspect-square rounded portfolio-placeholder-2 w-full border border-stone-300 dark:border-stone-800"></div>
+                            <div class="aspect-square rounded portfolio-placeholder-3 w-full border border-stone-300 dark:border-stone-800"></div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Right: Details & Actions -->

@@ -66,6 +66,26 @@
     <!-- Main Content -->
     <main class="pt-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        <!-- Session Alerts -->
+        @if (session('success'))
+            <div class="bg-emerald-100 border border-emerald-400 text-emerald-800 px-4 py-3 rounded relative mb-6 text-sm" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded relative mb-6 text-sm" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded relative mb-6 text-sm" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">{{ $errors->first() }}</span>
+            </div>
+        @endif
+
         <!-- Header & Availability Switch -->
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
             <div>
@@ -175,13 +195,53 @@
 
         </div>
 
-        <!-- Portfolio Quick Upload -->
-        <div class="mt-12 glass-card bg-white dark:bg-transparent rounded-xl p-12 border border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center text-center hover:border-amber-500 dark:hover:border-amber-600/50 hover:bg-stone-50 dark:hover:bg-stone-900/50 transition-colors cursor-pointer group shadow-sm dark:shadow-none">
-            <div class="w-16 h-16 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center mb-4 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/30 group-hover:scale-110 transition-all duration-300 shadow-sm">
-                <svg class="w-8 h-8 text-stone-400 dark:text-stone-400 group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+        <!-- Profile Bio & Portfolio -->
+        <h3 class="text-xs font-bold tracking-widest text-stone-500 dark:text-stone-400 uppercase mb-6 mt-16 flex items-center">
+            <span class="w-4 h-[1px] bg-amber-600 mr-3"></span> Your Craft & Identity
+        </h3>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Bio Form Column -->
+            <div class="lg:col-span-1 glass-card p-6 rounded-lg self-start">
+                <form action="{{ route('artisan.bio.update') }}" method="POST">
+                    @csrf
+                    <label class="block text-xs font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-3">Professional Bio</label>
+                    <textarea name="bio" rows="8" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-4 text-sm text-stone-800 dark:text-stone-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors" placeholder="Tell clients about your expertise, experience, and passion for your craft...">{{ $user->artisan->bio }}</textarea>
+                    <button type="submit" class="mt-4 w-full bg-amber-700 hover:bg-amber-800 text-stone-50 text-xs font-bold uppercase tracking-widest py-3 rounded transition-colors shadow-sm">Save Bio</button>
+                </form>
             </div>
-            <h4 class="font-heading text-2xl font-bold text-stone-900 dark:text-stone-200 mb-2">Add to Gallery</h4>
-            <p class="text-stone-500 text-sm">Drag and drop a new masterpiece photo here to keep your portfolio fresh.</p>
+
+            <!-- Portfolio Grid Column -->
+            <div class="lg:col-span-2">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Existing Images -->
+                    @foreach($user->artisan->portfolioImages as $image)
+                    <div class="relative group aspect-square rounded-lg overflow-hidden border border-stone-200 dark:border-stone-800">
+                        <img src="{{ asset('storage/' . $image->image_path) }}" alt="Portfolio piece" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-stone-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <form action="{{ route('artisan.portfolio.delete', $image->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-white hover:text-red-400 transition-colors p-2" title="Delete image">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @endforeach
+
+                    <!-- Upload Form Zone -->
+                    <form action="{{ route('artisan.portfolio.upload') }}" method="POST" enctype="multipart/form-data" class="aspect-square glass-card rounded-lg flex flex-col items-center justify-center text-center hover:border-amber-500 hover:bg-stone-50 dark:hover:bg-stone-900/50 transition-colors cursor-pointer group border-dashed border-2 relative">
+                        @csrf
+                        <input type="file" name="portfolio_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="this.form.submit()">
+                        <div class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center mb-3 group-hover:bg-amber-100 group-hover:scale-110 transition-all duration-300">
+                            <svg class="w-6 h-6 text-stone-400 group-hover:text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                        </div>
+                        <h4 class="font-heading text-lg font-bold text-stone-900 dark:text-stone-200">Add Photo</h4>
+                        <p class="text-stone-500 text-[10px] uppercase font-bold tracking-widest mt-1">Max 5MB</p>
+                    </form>
+                </div>
+            </div>
         </div>
 
     </main>

@@ -20,6 +20,11 @@ class Artisan extends Model
         return $this->belongsTo(User::class, 'artisan_id', 'id');
     }
 
+    public function portfolioImages()
+    {
+        return $this->hasMany(PortfolioImage::class, 'artisan_id', 'artisan_id');
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class, 'artisan_id', 'artisan_id');
