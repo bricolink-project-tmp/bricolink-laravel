@@ -25,7 +25,7 @@
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
     </style>
 </head>
-<body class="antialiased bg-stone-50 text-stone-900 dark:bg-[#0c0a09] dark:text-[#d6d3d1] selection:bg-amber-700 selection:text-white pb-32 md:pb-12 pt-24 md:pt-32 transition-colors duration-300">
+<body class="antialiased bg-stone-50 text-stone-900 dark:bg-[#0c0a09] dark:text-[#d6d3d1] selection:bg-amber-700 selection:text-white pb-32 md:pb-12 transition-colors duration-300">
 
     <nav class="fixed top-0 w-full z-50 glass-card border-b border-stone-200 dark:border-b-0 dark:border-stone-800 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,7 +51,7 @@
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto px-6 lg:px-8">
+    <main class="pt-32 max-w-4xl mx-auto px-6 lg:px-8">
 
 
         <header class="mb-12 mt-8 md:mt-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
