@@ -75,6 +75,7 @@
             $pendingJobs = $user->artisan->bookings->where('status', 'pending');
             $discussionJobs = $user->artisan->bookings->whereIn('status', ['in_discussion', 'artisan_approved', 'rejected_by_client']);
             $bookedJobs = $user->artisan->bookings->whereIn('status', ['booked', 'artisan_completed']);
+            $archivedJobs = $user->artisan->bookings->whereIn('status', ['completed', 'canceled', 'rejected_by_artisan', 'archived'])->sortByDesc('created_at');
             $newInquiriesCount = $pendingJobs->count();
             
             $completedWithRatings = $user->artisan->bookings->whereNotNull('rating');
@@ -300,6 +301,39 @@
             </div>
 
         </div>
+
+        <!-- Archive Section -->
+        <h3 class="text-xs font-bold tracking-widest text-stone-500 dark:text-stone-400 uppercase mb-6 mt-16 flex items-center">
+            <span class="w-4 h-[1px] bg-stone-400 mr-3"></span> Job Archive
+        </h3>
+        
+        @if($archivedJobs->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($archivedJobs as $job)
+            <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 border-l-4 {{ $job->status === 'completed' ? 'border-l-emerald-500 dark:border-l-emerald-600' : 'border-l-red-500 dark:border-l-red-600' }} transition-transform opacity-80 hover:opacity-100">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded border {{ $job->status === 'completed' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/30' : 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30' }}">
+                        {{ $job->status === 'completed' ? 'Completed' : 'Declined / Canceled' }}
+                    </span>
+                    <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($job->created_at)->format('M d, Y') }}</span>
+                </div>
+                <div class="flex items-center gap-2 mb-3 border-b border-stone-100 dark:border-stone-800 pb-3">
+                    <div class="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[9px] flex items-center justify-center font-bold text-stone-500">{{ substr($job->user->name, 0, 2) }}</div>
+                    <span class="text-xs font-bold text-stone-900 dark:text-stone-100">{{ $job->user->name }}</span>
+                </div>
+                <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-2 leading-relaxed">"{{ $job->description }}"</p>
+                
+                @if($job->status === 'completed')
+                    <div class="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold tracking-widest uppercase mt-2">Rating: {{ $job->rating ?? 'No Rating' }} ★</div>
+                @endif
+            </div>
+            @endforeach
+        </div>
+        @else
+        <div class="h-32 flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 border border-stone-300 dark:border-stone-800/50 rounded-lg border-dashed bg-stone-50/50 dark:bg-transparent">
+            <span class="text-xs uppercase tracking-widest font-bold">Archive is empty</span>
+        </div>
+        @endif
 
         <!-- Portfolio Grid Full Width -->
         <h3 class="text-xs font-bold tracking-widest text-stone-500 dark:text-stone-400 uppercase mb-6 mt-16 flex items-center">

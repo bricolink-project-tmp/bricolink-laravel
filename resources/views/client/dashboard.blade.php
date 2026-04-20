@@ -97,15 +97,21 @@
             @endforeach
         </div>
 
+        @php
+            $activeBookings = $clientBookings->whereIn('status', ['pending', 'in_discussion', 'artisan_approved', 'booked', 'artisan_completed']);
+            $completedBookings = $clientBookings->where('status', 'completed');
+            $archivedBookings = $clientBookings->whereIn('status', ['canceled', 'rejected_by_artisan', 'rejected_by_client', 'archived']);
+        @endphp
+
         <!-- Active Requests Panel -->
-        @if($clientBookings->count() > 0)
+        @if($activeBookings->count() > 0)
         <div class="mb-16">
             <h2 class="text-xs font-bold tracking-widest text-amber-700 dark:text-amber-500 uppercase flex items-center mb-6">
                 <span class="w-4 h-[1px] bg-amber-600 mr-3"></span> Your Active Jobs
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($clientBookings as $booking)
-                <div class="glass-card rounded-lg p-5 border-l-4 {{ $booking->status == 'completed' ? 'border-l-stone-500' : 'border-l-amber-500 dark:border-l-amber-600' }} shadow-sm">
+                @foreach($activeBookings as $booking)
+                <div class="glass-card rounded-lg p-5 border-l-4 border-l-amber-500 dark:border-l-amber-600 shadow-sm">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-[10px] font-bold text-amber-700 dark:text-amber-500 uppercase tracking-widest px-2 py-1 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-none">{{ str_replace('_', ' ', $booking->status) }}</span>
                         <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($booking->scheduled_date)->format('M d') }}</span>
@@ -131,13 +137,57 @@
                     </div>
                     @elseif($booking->status === 'artisan_completed')
                     <button onclick="document.getElementById('rating-modal-{{$booking->id}}').classList.remove('hidden')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Verify Work</button>
-                    @elseif($booking->status === 'completed')
-                    <div class="w-full border border-stone-200 dark:border-stone-800 text-center text-emerald-600 dark:text-emerald-500 text-[10px] font-bold uppercase tracking-widest py-2 rounded bg-stone-50 dark:bg-stone-900/50">Done ({{ $booking->rating }} ★)</div>
-                    @elseif($booking->status === 'canceled')
+                    @endif
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        <!-- Completed Jobs Panel -->
+        @if($completedBookings->count() > 0)
+        <div class="mb-16">
+            <h2 class="text-xs font-bold tracking-widest text-emerald-700 dark:text-emerald-500 uppercase flex items-center mb-6">
+                <span class="w-4 h-[1px] bg-emerald-600 mr-3"></span> Completed Jobs
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($completedBookings as $booking)
+                <div class="glass-card rounded-lg p-5 border-l-4 border-l-emerald-500 dark:border-l-emerald-600 shadow-sm opacity-90 hover:opacity-100 transition-opacity">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-800/30">Completed</span>
+                        <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($booking->updated_at)->format('M d') }}</span>
+                    </div>
+                    <h4 class="font-bold text-stone-900 dark:text-stone-100 mb-2 truncate">with {{ $booking->artisan->user->name }}</h4>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
+                    
+                    <div class="w-full border border-emerald-200 dark:border-emerald-800/50 text-center text-emerald-600 dark:text-emerald-500 text-[10px] font-bold uppercase tracking-widest py-2 rounded bg-emerald-50/50 dark:bg-emerald-900/10">Done ({{ $booking->rating }} ★)</div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        <!-- Canceled / Declined Jobs Panel -->
+        @if($archivedBookings->count() > 0)
+        <div class="mb-16">
+            <h2 class="text-xs font-bold tracking-widest text-stone-500 dark:text-stone-400 uppercase flex items-center mb-6">
+                <span class="w-4 h-[1px] bg-stone-400 mr-3"></span> Canceled or Declined Jobs
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($archivedBookings as $booking)
+                <div class="glass-card rounded-lg p-5 border-l-4 border-l-red-500 dark:border-l-red-600 shadow-sm opacity-80 hover:opacity-100 transition-opacity">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[10px] font-bold text-red-700 dark:text-red-400 uppercase tracking-widest px-2 py-1 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-800/30">Declined / Canceled</span>
+                        <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($booking->updated_at)->format('M d') }}</span>
+                    </div>
+                    <h4 class="font-bold text-stone-900 dark:text-stone-100 mb-2 truncate">with {{ $booking->artisan->user->name }}</h4>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
+                    
+                    @if($booking->status === 'canceled')
                     <div class="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-red-200 dark:border-red-800/30">Canceled</div>
                     @elseif($booking->status === 'rejected_by_artisan')
                     <div class="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-red-200 dark:border-red-800/30">Declined by Artisan</div>
-                    @elseif($booking->status === 'rejected_by_client')
+                    @elseif($booking->status === 'rejected_by_client' || $booking->status === 'archived')
                     <div class="bg-stone-50 dark:bg-stone-900/10 text-stone-500 dark:text-stone-500 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-stone-200 dark:border-stone-800/30">Canceled by You</div>
                     @endif
                 </div>
