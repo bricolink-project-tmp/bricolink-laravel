@@ -49,9 +49,13 @@
                     <span class="font-heading text-2xl font-bold tracking-tight text-amber-700 dark:text-amber-500 dark:glow-amber-text">Artisan <span class="text-stone-700 dark:text-stone-300 italic font-light">Studio</span></span>
                 </a>
                 <div class="flex items-center space-x-6">
-                    <!-- Settings Link -->
-                    <a href="{{ route('artisan.settings') }}" class="text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <!-- Global Settings Link -->
+                    <a href="{{ route('settings.index') }}" class="text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors" title="Account Settings">
+                        <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
+                    </a>
+                    <!-- Artisan Settings Link -->
+                    <a href="{{ route('artisan.settings') }}" class="text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors" title="Professional Profile">
+                        <span class="material-symbols-outlined text-[20px]">build</span>
                     </a>
                     <!-- Theme Toggle -->
                     <button id="theme-toggle" type="button" class="text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 focus:outline-none transition-colors">
@@ -59,7 +63,12 @@
                         <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                     </button>
                     
-                    <span class="hidden sm:inline-block text-sm text-stone-500 dark:text-stone-400">Welcome, <span class="text-stone-900 dark:text-stone-200">{{ explode(' ', $user->name)[0] }}</span></span>
+                    <div class="hidden sm:flex items-center gap-3">
+                        @if($user->profile_pic)
+                            <img src="{{ asset('storage/' . $user->profile_pic) }}" alt="Profile" class="w-8 h-8 rounded-full object-cover border border-stone-200 dark:border-stone-700">
+                        @endif
+                        <span class="text-sm text-stone-500 dark:text-stone-400">Welcome, <span class="text-stone-900 dark:text-stone-200">{{ explode(' ', $user->name)[0] }}</span></span>
+                    </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="text-xs font-bold tracking-widest uppercase text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">Sign Out</button>
@@ -188,7 +197,11 @@
                         <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($job->created_at)->diffForHumans() }}</span>
                     </div>
                     <div class="flex items-center gap-2 mb-3 border-b border-stone-100 dark:border-stone-800 pb-3">
-                        <div class="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[9px] flex items-center justify-center font-bold text-amber-700 dark:text-amber-500">{{ substr($job->user->name, 0, 2) }}</div>
+                        @if($job->user->profile_pic)
+                            <img src="{{ asset('storage/' . $job->user->profile_pic) }}" alt="Profile" class="w-6 h-6 rounded-full object-cover border border-stone-200 dark:border-stone-700">
+                        @else
+                            <div class="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[9px] flex items-center justify-center font-bold text-amber-700 dark:text-amber-500">{{ substr($job->user->name, 0, 2) }}</div>
+                        @endif
                         <span class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-amber-700 dark:group-hover:text-amber-500 transition-colors">{{ $job->user->name }}</span>
                     </div>
                     <div class="flex items-center justify-between mb-2">
@@ -228,7 +241,11 @@
                         </span>
                     </div>
                     <div class="flex items-center gap-2 mb-2">
-                        <div class="w-5 h-5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[8px] flex items-center justify-center font-bold text-stone-500">{{ substr($job->user->name, 0, 2) }}</div>
+                        @if($job->user->profile_pic)
+                            <img src="{{ asset('storage/' . $job->user->profile_pic) }}" alt="Profile" class="w-5 h-5 rounded-full object-cover border border-stone-200 dark:border-stone-700">
+                        @else
+                            <div class="w-5 h-5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[8px] flex items-center justify-center font-bold text-stone-500">{{ substr($job->user->name, 0, 2) }}</div>
+                        @endif
                         <span class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-amber-700 dark:group-hover:text-amber-500 transition-colors">{{ $job->user->name }}</span>
                     </div>
                     <div class="flex items-center justify-between mb-2">
@@ -294,7 +311,11 @@
                     <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($job->created_at)->format('M d, Y') }}</span>
                 </div>
                 <div class="flex items-center gap-2 mb-3 border-b border-stone-100 dark:border-stone-800 pb-3">
-                    <div class="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[9px] flex items-center justify-center font-bold text-stone-500">{{ substr($job->user->name, 0, 2) }}</div>
+                    @if($job->user->profile_pic)
+                        <img src="{{ asset('storage/' . $job->user->profile_pic) }}" alt="Profile" class="w-6 h-6 rounded-full object-cover border border-stone-200 dark:border-stone-700">
+                    @else
+                        <div class="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[9px] flex items-center justify-center font-bold text-stone-500">{{ substr($job->user->name, 0, 2) }}</div>
+                    @endif
                     <span class="text-xs font-bold text-stone-900 dark:text-stone-100">{{ $job->user->name }}</span>
                 </div>
                 <div class="flex items-center justify-between mb-2">

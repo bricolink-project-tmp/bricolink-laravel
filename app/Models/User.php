@@ -22,6 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'unique_id',
+        'profile_pic',
     ];
 
     /**
@@ -45,6 +47,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            if (empty($user->unique_id)) {
+                $user->unique_id = 'USR-' . strtoupper(\Illuminate\Support\Str::random(8));
+            }
+        });
     }
 
     public function artisan()

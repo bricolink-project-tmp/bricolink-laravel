@@ -31,7 +31,11 @@ class BookingController extends Controller
             'budget_range' => 'nullable|string|max:100',
             'location' => 'nullable|string|max:255',
             'scheduled_date' => 'required|date|after_or_equal:today',
-            'references.*' => 'nullable|mimes:jpeg,png,jpg,pdf|max:10240',
+            'references' => 'nullable|array|max:3',
+            'references.*' => 'nullable|mimes:jpeg,png,jpg,pdf|max:5120',
+        ], [
+            'references.max' => 'You cannot upload more than 3 reference images.',
+            'references.*.max' => 'Each image must not exceed 5MB.',
         ]);
 
         $artisan = Artisan::findOrFail($artisanId);

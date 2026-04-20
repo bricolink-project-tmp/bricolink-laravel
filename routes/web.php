@@ -20,7 +20,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
-    // Profile & Settings
+    // General Settings
+    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/profile', [App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('settings.profile');
+    Route::post('/settings/password', [App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('settings.password');
+
+    // Artisan Profile & Settings
     Route::get('/artisan/settings', [ArtisanController::class, 'settings'])->name('artisan.settings');
     Route::post('/artisan/availability', [ArtisanController::class, 'toggleAvailability'])->name('artisan.availability.toggle');
     Route::post('/artisan/profile', [ArtisanController::class, 'updateProfile'])->name('artisan.profile.update');

@@ -39,6 +39,14 @@
                     <span class="font-bold tracking-widest uppercase text-xs">Back to Dashboard</span>
                 </a>
                 <div class="flex items-center space-x-6">
+                    <!-- Global Settings Link -->
+                    <a href="{{ route('settings.index') }}" class="text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors" title="Account Settings">
+                        <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
+                    </a>
+                    <!-- Artisan Settings Link -->
+                    <a href="{{ route('artisan.settings') }}" class="text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors" title="Professional Profile">
+                        <span class="material-symbols-outlined text-[20px]">build</span>
+                    </a>
                     <!-- Theme Toggle -->
                     <button id="theme-toggle" type="button" class="text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 focus:outline-none transition-colors">
                         <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
@@ -84,15 +92,15 @@
                         <li>Your commitment to quality & materials.</li>
                     </ul>
                 </div>
-                <!-- Future expansions space -->
-                <div class="glass-card rounded-lg p-6 hover:border-amber-500/50 transition-colors cursor-not-allowed opacity-60">
-                    <h3 class="text-stone-800 dark:text-stone-300 font-bold uppercase tracking-widest text-xs mb-2">Notification Settings</h3>
-                    <p class="text-stone-500 dark:text-stone-500 text-xs">Coming Soon. Manage email alerts for quotes.</p>
-                </div>
-                <div class="glass-card rounded-lg p-6 hover:border-amber-500/50 transition-colors cursor-not-allowed opacity-60">
-                    <h3 class="text-stone-800 dark:text-stone-300 font-bold uppercase tracking-widest text-xs mb-2">Account Security</h3>
-                    <p class="text-stone-500 dark:text-stone-500 text-xs">Coming Soon. Update your password and auth keys.</p>
-                </div>
+                <a href="{{ route('settings.index') }}" class="block glass-card rounded-lg p-6 border-l-4 border-l-amber-500 hover:border-l-amber-600 transition-all shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer group">
+                    <h3 class="text-stone-800 dark:text-stone-300 font-bold uppercase tracking-widest text-xs mb-2 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px] text-amber-600">manage_accounts</span> Account Settings
+                    </h3>
+                    <p class="text-stone-500 dark:text-stone-400 text-xs mb-4">Update your profile picture, name, and password.</p>
+                    <div class="text-[10px] font-bold text-amber-600 dark:text-amber-500 flex items-center gap-1 group-hover:gap-2 transition-all uppercase tracking-widest">
+                        Manage Account <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                    </div>
+                </a>
             </div>
 
             <!-- Right Column: Form -->

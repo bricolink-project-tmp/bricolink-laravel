@@ -115,13 +115,13 @@
                 <p class="text-stone-600 dark:text-stone-400 mb-6">Upload images of materials, room layouts, or stylistic references to help the artisan understand your aesthetic.</p>
                 
                 <div class="border-2 border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-12 text-center hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors cursor-pointer group relative">
-                    <input type="file" name="references[]" multiple accept="image/jpeg,image/png,image/jpg,application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="file-upload">
+                    <input type="file" name="references[]" multiple accept="image/jpeg,image/png,image/jpg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="file-upload">
                     <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-stone-100 dark:bg-stone-800 mb-4 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/30 transition-colors">
                         <span class="material-symbols-outlined text-3xl text-stone-400 dark:text-stone-500 group-hover:text-amber-600 dark:group-hover:text-amber-500">cloud_upload</span>
                     </div>
                     <h3 class="font-heading text-lg text-stone-900 dark:text-stone-100 mb-2">Drag & Drop Files Here</h3>
                     <p class="text-sm text-stone-500 dark:text-stone-400">or click to browse from your device</p>
-                    <p class="text-xs text-stone-400 dark:text-stone-500 mt-4">JPG, PNG, PDF up to 10MB each</p>
+                    <p class="text-xs text-stone-400 dark:text-stone-500 mt-4">JPG, PNG up to 5MB each. Maximum 3 files.</p>
                     <div id="file-list" class="mt-4 text-xs font-bold text-amber-700 dark:text-amber-500"></div>
                 </div>
             </section>
@@ -166,8 +166,30 @@
         document.getElementById('file-upload').addEventListener('change', function(e) {
             const list = document.getElementById('file-list');
             list.innerHTML = '';
-            if (this.files.length > 0) {
-                list.innerHTML = this.files.length + ' file(s) selected';
+            
+            let files = Array.from(this.files);
+            
+            if (files.length > 3) {
+                alert('You can only upload a maximum of 3 reference images.');
+                this.value = ''; // Clear selection
+                return;
+            }
+
+            let valid = true;
+            files.forEach(file => {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} is larger than 5MB.`);
+                    valid = false;
+                }
+            });
+
+            if (!valid) {
+                this.value = '';
+                return;
+            }
+
+            if (files.length > 0) {
+                list.innerHTML = files.length + ' file(s) selected';
             }
         });
     </script>

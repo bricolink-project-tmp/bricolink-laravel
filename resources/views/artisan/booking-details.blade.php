@@ -72,7 +72,11 @@
                 <h1 class="font-heading text-4xl md:text-5xl text-stone-900 dark:text-stone-100 tracking-tight">{{ $booking->title ?? 'Custom Request' }}</h1>
             </div>
             <div class="flex items-center gap-4 bg-white dark:bg-stone-900/50 p-4 rounded-xl border border-stone-200 dark:border-stone-800">
+            @if($booking->user->profile_pic)
+                <img src="{{ asset('storage/' . $booking->user->profile_pic) }}" alt="Profile" class="w-12 h-12 rounded-full object-cover border border-stone-200 dark:border-stone-700">
+            @else
                 <div class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-sm flex items-center justify-center font-bold text-stone-500">{{ substr($booking->user->name, 0, 2) }}</div>
+            @endif
                 <div>
                     <div class="text-[10px] text-stone-500 dark:text-stone-400 uppercase font-bold tracking-widest mb-0.5">Client</div>
                     <div class="font-bold text-stone-900 dark:text-stone-100 text-sm">{{ $booking->user->name }}</div>
