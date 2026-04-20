@@ -31,9 +31,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/client/artisan/{id}/request-quote', [App\Http\Controllers\BookingController::class, 'create'])->name('booking.create');
     Route::post('/booking/{artisanId}', [App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
     Route::get('/artisan/booking/{booking}', [App\Http\Controllers\BookingController::class, 'show'])->name('booking.artisan.show');
+    Route::get('/client/booking/{booking}', [App\Http\Controllers\BookingController::class, 'clientShow'])->name('booking.client.show');
     Route::post('/artisan/booking/{booking}/status', [App\Http\Controllers\BookingController::class, 'artisanStatusUpdate'])->name('booking.artisan.status');
     Route::post('/client/booking/{booking}/approve', [App\Http\Controllers\BookingController::class, 'clientApprove'])->name('booking.client.approve');
     Route::post('/client/booking/{booking}/decline', [App\Http\Controllers\BookingController::class, 'clientDecline'])->name('booking.client.decline');
     Route::post('/client/booking/{booking}/verify', [App\Http\Controllers\BookingController::class, 'clientVerify'])->name('booking.client.verify');
     Route::get('/client/artisan/{id}', [App\Http\Controllers\DashboardController::class, 'viewArtisanProfile'])->name('client.artisan.profile');
+
+    // Chat API
+    Route::get('/api/booking/{booking}/messages', [App\Http\Controllers\MessageController::class, 'index'])->name('api.messages.index');
+    Route::post('/api/booking/{booking}/messages', [App\Http\Controllers\MessageController::class, 'store'])->name('api.messages.store');
 });

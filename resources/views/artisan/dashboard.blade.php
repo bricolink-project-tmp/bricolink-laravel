@@ -221,7 +221,7 @@
                 </div>
                 
                 @forelse($discussionJobs as $job)
-                <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 {{ $job->status === 'rejected_by_client' ? 'border-l-red-500 dark:border-l-red-600' : 'border-l-stone-500' }} transition-transform">
+                <a href="{{ route('booking.artisan.show', $job->id) }}" class="block glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 {{ $job->status === 'rejected_by_client' ? 'border-l-red-500 dark:border-l-red-600' : 'border-l-stone-500' }} transition-transform hover:-translate-y-1 hover:shadow-md cursor-pointer group">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded border {{ $job->status === 'rejected_by_client' ? 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30' : 'text-stone-600 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 border-stone-200 dark:border-none' }}">
                             {{ $job->status === 'rejected_by_client' ? 'Client Declined' : 'Active Chat' }}
@@ -229,39 +229,18 @@
                     </div>
                     <div class="flex items-center gap-2 mb-2">
                         <div class="w-5 h-5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-[8px] flex items-center justify-center font-bold text-stone-500">{{ substr($job->user->name, 0, 2) }}</div>
-                        <span class="text-xs font-bold text-stone-900 dark:text-stone-100">{{ $job->user->name }}</span>
+                        <span class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-amber-700 dark:group-hover:text-amber-500 transition-colors">{{ $job->user->name }}</span>
                     </div>
                     <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate">{{ $job->title ?? 'Custom Request' }}</h4>
+                        <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate group-hover:text-amber-700 dark:group-hover:text-amber-500 transition-colors">{{ $job->title ?? 'Custom Request' }}</h4>
                         <span class="text-[10px] font-mono font-bold text-stone-400 dark:text-stone-500">{{ $job->reference_id }}</span>
                     </div>
-                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-1 mb-4 italic">"{{ $job->description }}"</p>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-1 mb-2 italic">"{{ $job->description }}"</p>
                     
-                    <div class="border-t border-stone-100 dark:border-stone-800 pt-3">
-                        @if($job->status === 'artisan_approved')
-                            <div class="w-full bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-stone-200 dark:border-stone-700 shadow-inner">Waiting for Client</div>
-                        @elseif($job->status === 'rejected_by_client')
-                            <div class="text-[10px] text-red-600 dark:text-red-400 mb-3 bg-red-50 dark:bg-red-900/10 p-2 rounded">Client declined your price: ${{ number_format($job->price, 2) }}</div>
-                            <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="status" value="archived">
-                                <button type="submit" class="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-none tracking-widest">OK (Archive)</button>
-                            </form>
-                        @else
-                            <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST" class="space-y-3">
-                                @csrf
-                                <input type="hidden" name="status" value="artisan_approved">
-                                <div>
-                                    <input type="number" name="price" step="0.01" min="0" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded px-2 py-1.5 text-xs text-stone-800 dark:text-stone-200 focus:outline-none focus:border-amber-500 transition-colors" placeholder="Total Price ($)" required>
-                                </div>
-                                <div>
-                                    <textarea name="final_terms" rows="2" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded px-2 py-1.5 text-xs text-stone-800 dark:text-stone-200 focus:outline-none focus:border-amber-500 transition-colors" placeholder="Final details & timeline..." required></textarea>
-                                </div>
-                                <button type="submit" class="w-full bg-stone-800 hover:bg-stone-900 dark:bg-stone-200 dark:hover:bg-white text-stone-50 dark:text-stone-900 text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Send Final Terms</button>
-                            </form>
-                        @endif
+                    <div class="text-[10px] font-bold text-amber-600 dark:text-amber-500 mt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Enter Deal Room <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                     </div>
-                </div>
+                </a>
                 @empty
                 <div class="h-32 flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 border border-stone-300 dark:border-stone-800/50 rounded-lg border-dashed mt-4 bg-stone-50/50 dark:bg-transparent">
                     <span class="text-xs uppercase tracking-widest font-bold">No active chats</span>
@@ -277,27 +256,19 @@
                 </div>
                 
                 @forelse($bookedJobs as $job)
-                <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 border-l-emerald-500 dark:border-l-emerald-600 transition-transform">
+                <a href="{{ route('booking.artisan.show', $job->id) }}" class="block glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 mb-4 border-l-4 border-l-emerald-500 dark:border-l-emerald-600 transition-transform hover:-translate-y-1 hover:shadow-md cursor-pointer group">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-500 uppercase tracking-widest px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-none">Active Work</span>
                         <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">Due {{ \Carbon\Carbon::parse($job->scheduled_date)->format('M d') }}</span>
                     </div>
                     <div class="flex items-center gap-2 mb-3">
-                        <span class="text-xs font-bold text-stone-900 dark:text-stone-100">For {{ $job->user->name }}</span>
+                        <span class="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-500 transition-colors">For {{ $job->user->name }}</span>
                     </div>
                     
-                    <div class="border-t border-stone-100 dark:border-stone-800 pt-3">
-                        @if($job->status === 'artisan_completed')
-                            <div class="w-full bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded shadow-inner">Delivered / Awaiting Pay</div>
-                        @else
-                            <form action="{{ route('booking.artisan.status', $job->id) }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="status" value="artisan_completed">
-                                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm dark:shadow-[0_0_10px_rgba(16,185,129,0.3)]">Mark Job Complete</button>
-                            </form>
-                        @endif
+                    <div class="text-[10px] font-bold text-emerald-600 dark:text-emerald-500 mt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Enter Deal Room <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                     </div>
-                </div>
+                </a>
                 @empty
                 <div class="h-32 flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 border border-stone-300 dark:border-stone-800/50 rounded-lg border-dashed mt-4 bg-stone-50/50 dark:bg-transparent">
                     <span class="text-xs uppercase tracking-widest font-bold">No active builds</span>
@@ -315,7 +286,7 @@
         @if($archivedJobs->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($archivedJobs as $job)
-            <div class="glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 border-l-4 {{ $job->status === 'completed' ? 'border-l-emerald-500 dark:border-l-emerald-600' : 'border-l-red-500 dark:border-l-red-600' }} transition-transform opacity-80 hover:opacity-100">
+            <a href="{{ route('booking.artisan.show', $job->id) }}" class="block glass-card rounded-lg bg-white dark:bg-stone-900/90 shadow-sm dark:shadow-none p-4 border-l-4 {{ $job->status === 'completed' ? 'border-l-emerald-500 dark:border-l-emerald-600' : 'border-l-red-500 dark:border-l-red-600' }} transition-all opacity-80 hover:opacity-100 hover:-translate-y-1 hover:shadow-md cursor-pointer group">
                 <div class="flex justify-between items-start mb-3">
                     <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded border {{ $job->status === 'completed' ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/30' : 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30' }}">
                         {{ $job->status === 'completed' ? 'Completed' : 'Declined / Canceled' }}
@@ -327,7 +298,7 @@
                     <span class="text-xs font-bold text-stone-900 dark:text-stone-100">{{ $job->user->name }}</span>
                 </div>
                 <div class="flex items-center justify-between mb-2">
-                    <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate">{{ $job->title ?? 'Custom Request' }}</h4>
+                    <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate group-hover:text-stone-700 dark:group-hover:text-stone-300 transition-colors">{{ $job->title ?? 'Custom Request' }}</h4>
                     <span class="text-[10px] font-mono font-bold text-stone-400 dark:text-stone-500">{{ $job->reference_id }}</span>
                 </div>
                 <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-2 leading-relaxed">"{{ $job->description }}"</p>
@@ -335,7 +306,7 @@
                 @if($job->status === 'completed')
                     <div class="text-[10px] text-emerald-600 dark:text-emerald-500 font-bold tracking-widest uppercase mt-2">Rating: {{ $job->rating ?? 'No Rating' }} ★</div>
                 @endif
-            </div>
+            </a>
             @endforeach
         </div>
         @else

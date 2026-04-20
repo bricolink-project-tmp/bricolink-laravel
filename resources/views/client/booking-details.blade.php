@@ -72,10 +72,10 @@
                 <h1 class="font-heading text-4xl md:text-5xl text-stone-900 dark:text-stone-100 tracking-tight">{{ $booking->title ?? 'Custom Request' }}</h1>
             </div>
             <div class="flex items-center gap-4 bg-white dark:bg-stone-900/50 p-4 rounded-xl border border-stone-200 dark:border-stone-800">
-                <div class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-sm flex items-center justify-center font-bold text-stone-500">{{ substr($booking->user->name, 0, 2) }}</div>
+                <div class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-sm flex items-center justify-center font-bold text-stone-500">{{ substr($booking->artisan->user->name, 0, 2) }}</div>
                 <div>
-                    <div class="text-[10px] text-stone-500 dark:text-stone-400 uppercase font-bold tracking-widest mb-0.5">Client</div>
-                    <div class="font-bold text-stone-900 dark:text-stone-100 text-sm">{{ $booking->user->name }}</div>
+                    <div class="text-[10px] text-stone-500 dark:text-stone-400 uppercase font-bold tracking-widest mb-0.5">Artisan</div>
+                    <div class="font-bold text-stone-900 dark:text-stone-100 text-sm">{{ $booking->artisan->user->name }}</div>
                 </div>
             </div>
         </header>
@@ -171,93 +171,108 @@
 
                 <!-- Actions -->
                 @if($booking->status === 'pending')
-                <div class="glass-card rounded-xl p-6 border-t-4 border-t-amber-500">
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-4">Response Actions</h3>
+                <div class="glass-card rounded-xl p-6 border border-amber-200 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-900/10">
+                    <div class="flex items-center gap-3 text-amber-700 dark:text-amber-500 mb-2">
+                        <span class="material-symbols-outlined text-2xl">hourglass_empty</span>
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest">Awaiting Artisan Response</h3>
+                    </div>
+                    <p class="text-[11px] text-stone-600 dark:text-stone-400">The artisan has received your request and will respond shortly.</p>
+                </div>
+                @elseif($booking->status === 'in_discussion')
+                <div class="glass-card rounded-xl p-6 border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/50 relative z-20">
+                    <div class="flex items-center gap-3 text-stone-700 dark:text-stone-300 mb-2">
+                        <span class="material-symbols-outlined text-2xl">forum</span>
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest">Active Chat</h3>
+                    </div>
+                    <p class="text-[11px] text-stone-600 dark:text-stone-400">You are discussing the details with the artisan. They will send a final quote when ready.</p>
+                </div>
+                @elseif($booking->status === 'artisan_approved')
+                <div class="glass-card rounded-xl p-6 border-t-4 border-t-amber-500 shadow-sm relative z-30">
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-500 mb-2">Review Final Quote</h3>
+                    <p class="text-xs text-stone-600 dark:text-stone-400 mb-4">The artisan proposed a final price of <strong class="text-stone-900 dark:text-stone-100">${{ number_format($booking->price, 2) }}</strong>.</p>
+                    <div class="bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-3 mb-4">
+                        <p class="text-xs text-stone-600 dark:text-stone-400 italic">"{{ $booking->final_terms }}"</p>
+                    </div>
                     
-                    <form action="{{ route('booking.artisan.status', $booking->id) }}" method="POST" class="mb-3">
-                        @csrf
-                        <input type="hidden" name="status" value="in_discussion">
-                        <button type="submit" class="w-full bg-amber-700 hover:bg-amber-800 text-white dark:text-stone-950 text-sm font-bold uppercase tracking-widest py-3 px-4 rounded transition-colors shadow-sm dark:shadow-[0_0_15px_rgba(217,119,6,0.2)] flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-[18px]">forum</span> Accept & Negotiate
-                        </button>
-                    </form>
+                    <div class="flex flex-col gap-2">
+                        <form action="{{ route('booking.client.approve', $booking->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest py-3 px-4 rounded text-[10px] transition-colors shadow-sm flex justify-center items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">check_circle</span> Accept Terms & Book
+                            </button>
+                        </form>
+                        <form action="{{ route('booking.client.decline', $booking->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold uppercase tracking-widest py-3 px-4 rounded text-[10px] transition-colors flex justify-center items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">cancel</span> Decline Terms
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @elseif($booking->status === 'booked')
+                <div class="glass-card rounded-xl p-6 border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-900/10">
+                    <div class="flex items-center gap-3 text-emerald-700 dark:text-emerald-500 mb-2">
+                        <span class="material-symbols-outlined text-2xl">construction</span>
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest">Work in Progress</h3>
+                    </div>
+                    <p class="text-[11px] text-stone-600 dark:text-stone-400">The artisan is currently working on your request. They will notify you here when it is complete.</p>
+                </div>
+                @elseif($booking->status === 'artisan_completed')
+                <div class="glass-card rounded-xl p-6 border-t-4 border-t-amber-500 shadow-sm relative z-30">
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-500 mb-2">Verify Work</h3>
+                    <p class="text-[11px] text-stone-600 dark:text-stone-400 mb-4">The artisan marked this job as completed. Please verify the work and leave a rating to close the deal.</p>
                     
-                    <form action="{{ route('booking.artisan.status', $booking->id) }}" method="POST">
+                    <form action="{{ route('booking.client.verify', $booking->id) }}" method="POST" class="space-y-4">
                         @csrf
-                        <input type="hidden" name="status" value="rejected_by_artisan">
-                        <button type="submit" class="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-400 text-xs font-bold uppercase tracking-widest py-3 px-4 rounded transition-colors">
-                            Decline Request
+                        <input type="hidden" name="status" value="completed">
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-stone-600 dark:text-stone-400 mb-2">Your Rating</label>
+                            <style>
+                                .star-rating input:checked ~ label { color: #f59e0b; }
+                                .star-rating label:hover, .star-rating label:hover ~ label { color: #f59e0b; }
+                            </style>
+                            <div class="flex flex-row-reverse justify-end items-center gap-1 star-rating">
+                                <input type="radio" name="rating" id="star5" value="5" class="hidden" required />
+                                <label for="star5" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <input type="radio" name="rating" id="star4" value="4" class="hidden" />
+                                <label for="star4" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <input type="radio" name="rating" id="star3" value="3" class="hidden" />
+                                <label for="star3" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <input type="radio" name="rating" id="star2" value="2" class="hidden" />
+                                <label for="star2" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <input type="radio" name="rating" id="star1" value="1" class="hidden" />
+                                <label for="star1" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest py-3 px-4 rounded text-[10px] transition-colors shadow-sm flex justify-center items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px]">verified</span> Confirm & Rate
                         </button>
                     </form>
                 </div>
-                @elseif($booking->status === 'in_discussion')
-                    <div class="glass-card rounded-xl p-6 border-t-4 border-t-amber-500 shadow-sm relative z-20">
-                        <h3 class="text-[10px] font-bold uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-4">Propose Final Quote</h3>
-                        <form action="{{ route('booking.artisan.status', $booking->id) }}" method="POST" class="space-y-4">
-                            @csrf
-                            <input type="hidden" name="status" value="artisan_approved">
-                            <div>
-                                <label class="block text-[10px] uppercase font-bold text-stone-600 dark:text-stone-400 mb-1">Final Price ($)</label>
-                                <input type="number" name="price" step="0.01" min="0" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-amber-500 transition-colors text-stone-900 dark:text-stone-100" required>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] uppercase font-bold text-stone-600 dark:text-stone-400 mb-1">Terms & Conditions</label>
-                                <textarea name="final_terms" rows="3" class="w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-amber-500 transition-colors text-stone-900 dark:text-stone-100" placeholder="Timeline, inclusions, materials..." required></textarea>
-                            </div>
-                            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold uppercase tracking-widest py-3 px-4 rounded text-[10px] transition-colors shadow-sm flex justify-center items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px]">request_quote</span> Send Formal Quote
-                            </button>
-                        </form>
-                    </div>
-                @elseif($booking->status === 'artisan_approved')
-                    <div class="glass-card rounded-xl p-6 border border-amber-200 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-900/10">
-                        <div class="flex items-center gap-3 text-amber-700 dark:text-amber-500 mb-2">
-                            <span class="material-symbols-outlined text-2xl">hourglass_empty</span>
-                            <h3 class="text-[10px] font-bold uppercase tracking-widest">Waiting for Client</h3>
-                        </div>
-                        <p class="text-xs text-stone-600 dark:text-stone-400">You proposed a final price of <strong class="text-stone-900 dark:text-stone-100">${{ number_format($booking->price, 2) }}</strong>. Waiting for the client to accept and book.</p>
-                    </div>
-                @elseif($booking->status === 'booked')
-                    <div class="glass-card rounded-xl p-6 border-t-4 border-t-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/10">
-                        <h3 class="text-[10px] font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-500 mb-2">Job is Active</h3>
-                        <p class="text-[11px] text-stone-600 dark:text-stone-400 mb-4 leading-relaxed">When you have completed the work and delivered it to the client, mark it as finished here.</p>
-                        <form action="{{ route('booking.artisan.status', $booking->id) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="status" value="artisan_completed">
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest py-3 px-4 rounded text-[10px] transition-colors shadow-sm flex justify-center items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px]">task_alt</span> Mark Job Complete
-                            </button>
-                        </form>
-                    </div>
-                @elseif($booking->status === 'artisan_completed')
-                    <div class="glass-card rounded-xl p-6 border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-900/10">
-                        <div class="flex items-center gap-3 text-emerald-700 dark:text-emerald-500 mb-2">
-                            <span class="material-symbols-outlined text-2xl">hourglass_empty</span>
-                            <h3 class="text-[10px] font-bold uppercase tracking-widest">Waiting for Verification</h3>
-                        </div>
-                        <p class="text-[11px] text-stone-600 dark:text-stone-400">You marked this job as completed. Waiting for the client to verify and leave a review.</p>
-                    </div>
                 @elseif($booking->status === 'completed')
-                    <div class="glass-card rounded-xl p-6 border-l-4 border-l-emerald-500 bg-white dark:bg-stone-900/50">
-                        <h3 class="text-[10px] font-bold uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-4">Final Verdict</h3>
-                        <div class="text-center">
-                            <div class="text-3xl text-emerald-500 mb-1 font-bold">{{ $booking->rating }} ★</div>
-                            <div class="text-[10px] uppercase font-bold text-stone-400 tracking-widest">Client Rating</div>
-                        </div>
+                <div class="glass-card rounded-xl p-6 border-l-4 border-l-emerald-500 bg-white dark:bg-stone-900/50">
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-4">Job Completed</h3>
+                    <div class="text-center">
+                        <div class="text-3xl text-emerald-500 mb-1 font-bold">{{ $booking->rating }} ★</div>
+                        <div class="text-[10px] uppercase font-bold text-stone-400 tracking-widest">Your Rating</div>
                     </div>
+                </div>
                 @elseif($booking->status === 'rejected_by_client')
-                    <div class="glass-card rounded-xl p-6 border border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-900/10">
-                        <div class="flex items-center gap-3 text-red-700 dark:text-red-500 mb-2">
-                            <span class="material-symbols-outlined text-2xl">cancel</span>
-                            <h3 class="text-[10px] font-bold uppercase tracking-widest">Declined by Client</h3>
-                        </div>
-                        <p class="text-[11px] text-stone-600 dark:text-stone-400 mb-4">The client declined your formal quote of <strong class="text-stone-900 dark:text-stone-100">${{ number_format($booking->price, 2) }}</strong>.</p>
-                        <form action="{{ route('booking.artisan.status', $booking->id) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="status" value="archived">
-                            <button type="submit" class="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold uppercase tracking-widest py-2 rounded text-[10px] transition-colors">Archive</button>
-                        </form>
+                <div class="glass-card rounded-xl p-6 border-l-4 border-l-stone-500 bg-stone-50 dark:bg-stone-900/50">
+                    <div class="flex items-center gap-3 text-stone-700 dark:text-stone-400 mb-2">
+                        <span class="material-symbols-outlined text-2xl">cancel</span>
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest">Declined by You</h3>
                     </div>
+                    <p class="text-[11px] text-stone-600 dark:text-stone-500 mb-4">You declined the final quote for this request.</p>
+                </div>
+                @elseif($booking->status === 'rejected_by_artisan')
+                <div class="glass-card rounded-xl p-6 border border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-900/10">
+                    <div class="flex items-center gap-3 text-red-700 dark:text-red-500 mb-2">
+                        <span class="material-symbols-outlined text-2xl">cancel</span>
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest">Declined by Artisan</h3>
+                    </div>
+                    <p class="text-[11px] text-stone-600 dark:text-stone-400">The artisan was unable to accept this request.</p>
+                </div>
                 @endif
             </div>
 

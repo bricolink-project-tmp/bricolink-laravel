@@ -85,6 +85,17 @@ class BookingController extends Controller
         return view('artisan.booking-details', compact('booking'));
     }
 
+    // Client views detailed booking request
+    public function clientShow(Booking $booking)
+    {
+        // Security check
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('client.booking-details', compact('booking'));
+    }
+
     // Artisan updates the status of the booking
     public function artisanStatusUpdate(Request $request, Booking $booking)
     {

@@ -47,4 +47,9 @@ class Booking extends Model
     {
         return $this->belongsTo(Artisan::class, 'artisan_id', 'artisan_id');
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }

@@ -111,13 +111,13 @@
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($activeBookings as $booking)
-                <div class="glass-card rounded-lg p-5 border-l-4 border-l-amber-500 dark:border-l-amber-600 shadow-sm">
+                <a href="{{ route('booking.client.show', $booking->id) }}" class="block glass-card rounded-lg p-5 border-l-4 border-l-amber-500 dark:border-l-amber-600 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md cursor-pointer group">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-[10px] font-bold text-amber-700 dark:text-amber-500 uppercase tracking-widest px-2 py-1 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-none">{{ str_replace('_', ' ', $booking->status) }}</span>
                         <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($booking->scheduled_date)->format('M d') }}</span>
                     </div>
                     <div class="flex items-center justify-between mb-1">
-                        <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate">{{ $booking->title ?? 'Custom Request' }}</h4>
+                        <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate group-hover:text-amber-700 dark:group-hover:text-amber-500 transition-colors">{{ $booking->title ?? 'Custom Request' }}</h4>
                         <span class="text-[10px] font-mono font-bold text-stone-400 dark:text-stone-500">{{ $booking->reference_id }}</span>
                     </div>
                     <div class="text-[10px] text-stone-500 dark:text-stone-400 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name }}</div>
@@ -127,28 +127,11 @@
                             @if($booking->location) <span class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 text-[9px] px-1.5 py-0.5 rounded">{{ $booking->location }}</span> @endif
                         </div>
                     @endif
-                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
-                    
-                    @if($booking->status === 'artisan_approved')
-                    <div class="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded p-4 mb-4">
-                        <div class="text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-500 mb-1">Final Proposed Terms</div>
-                        <div class="text-sm font-bold text-stone-900 dark:text-stone-100 mb-2">${{ number_format($booking->price, 2) }}</div>
-                        <p class="text-xs text-stone-600 dark:text-stone-400 italic">"{{ $booking->final_terms }}"</p>
+                    <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-2 leading-relaxed">{{ $booking->description }}</p>
+                    <div class="text-[10px] font-bold text-amber-600 dark:text-amber-500 mt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Enter Deal Room <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                     </div>
-                    <div class="flex gap-2">
-                        <form action="{{ route('booking.client.decline', $booking->id) }}" method="POST" class="flex-1">
-                            @csrf
-                            <button type="submit" class="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 text-[10px] font-bold uppercase tracking-widest py-3 rounded transition-colors shadow-sm">Decline Terms</button>
-                        </form>
-                        <form action="{{ route('booking.client.approve', $booking->id) }}" method="POST" class="flex-1">
-                            @csrf
-                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest py-3 rounded transition-colors shadow-sm">Accept & Hire</button>
-                        </form>
-                    </div>
-                    @elseif($booking->status === 'artisan_completed')
-                    <button onclick="document.getElementById('rating-modal-{{$booking->id}}').classList.remove('hidden')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold uppercase tracking-widest py-2 rounded transition-colors shadow-sm">Verify Work</button>
-                    @endif
-                </div>
+                </a>
                 @endforeach
             </div>
         </div>
@@ -162,20 +145,20 @@
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($completedBookings as $booking)
-                <div class="glass-card rounded-lg p-5 border-l-4 border-l-emerald-500 dark:border-l-emerald-600 shadow-sm opacity-90 hover:opacity-100 transition-opacity">
+                <a href="{{ route('booking.client.show', $booking->id) }}" class="block glass-card rounded-lg p-5 border-l-4 border-l-emerald-500 dark:border-l-emerald-600 shadow-sm opacity-90 hover:opacity-100 transition-all hover:-translate-y-1 hover:shadow-md cursor-pointer group">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-800/30">Completed</span>
                         <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($booking->updated_at)->format('M d') }}</span>
                     </div>
                     <div class="flex items-center justify-between mb-1">
-                        <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate">{{ $booking->title ?? 'Custom Request' }}</h4>
+                        <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-500 transition-colors">{{ $booking->title ?? 'Custom Request' }}</h4>
                         <span class="text-[10px] font-mono font-bold text-stone-400 dark:text-stone-500">{{ $booking->reference_id }}</span>
                     </div>
                     <div class="text-[10px] text-stone-500 dark:text-stone-400 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name }}</div>
                     <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
                     
-                    <div class="w-full border border-emerald-200 dark:border-emerald-800/50 text-center text-emerald-600 dark:text-emerald-500 text-[10px] font-bold uppercase tracking-widest py-2 rounded bg-emerald-50/50 dark:bg-emerald-900/10">Done ({{ $booking->rating }} ★)</div>
-                </div>
+                    <div class="w-full border border-emerald-200 dark:border-emerald-800/50 text-center text-emerald-600 dark:text-emerald-500 text-[10px] font-bold uppercase tracking-widest py-2 rounded bg-emerald-50/50 dark:bg-emerald-900/10 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/30 transition-colors">Done ({{ $booking->rating }} ★)</div>
+                </a>
                 @endforeach
             </div>
         </div>
@@ -189,26 +172,26 @@
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($archivedBookings as $booking)
-                <div class="glass-card rounded-lg p-5 border-l-4 border-l-red-500 dark:border-l-red-600 shadow-sm opacity-80 hover:opacity-100 transition-opacity">
+                <a href="{{ route('booking.client.show', $booking->id) }}" class="block glass-card rounded-lg p-5 border-l-4 border-l-red-500 dark:border-l-red-600 shadow-sm opacity-80 hover:opacity-100 transition-all hover:-translate-y-1 hover:shadow-md cursor-pointer group">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-[10px] font-bold text-red-700 dark:text-red-400 uppercase tracking-widest px-2 py-1 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-800/30">Declined / Canceled</span>
                         <span class="text-[10px] text-stone-400 dark:text-stone-500 uppercase font-bold tracking-wider">{{ \Carbon\Carbon::parse($booking->updated_at)->format('M d') }}</span>
                     </div>
                     <div class="flex items-center justify-between mb-1">
-                        <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate">{{ $booking->title ?? 'Custom Request' }}</h4>
+                        <h4 class="font-bold text-stone-900 dark:text-stone-100 truncate group-hover:text-red-700 dark:group-hover:text-red-500 transition-colors">{{ $booking->title ?? 'Custom Request' }}</h4>
                         <span class="text-[10px] font-mono font-bold text-stone-400 dark:text-stone-500">{{ $booking->reference_id }}</span>
                     </div>
                     <div class="text-[10px] text-stone-500 dark:text-stone-400 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name }}</div>
                     <p class="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
                     
                     @if($booking->status === 'canceled')
-                    <div class="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-red-200 dark:border-red-800/30">Canceled</div>
+                    <div class="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-red-200 dark:border-red-800/30 group-hover:bg-red-100 dark:group-hover:bg-red-900/30 transition-colors">Canceled</div>
                     @elseif($booking->status === 'rejected_by_artisan')
-                    <div class="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-red-200 dark:border-red-800/30">Declined by Artisan</div>
+                    <div class="bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-red-200 dark:border-red-800/30 group-hover:bg-red-100 dark:group-hover:bg-red-900/30 transition-colors">Declined by Artisan</div>
                     @elseif($booking->status === 'rejected_by_client' || $booking->status === 'archived')
-                    <div class="bg-stone-50 dark:bg-stone-900/10 text-stone-500 dark:text-stone-500 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-stone-200 dark:border-stone-800/30">Canceled by You</div>
+                    <div class="bg-stone-50 dark:bg-stone-900/10 text-stone-500 dark:text-stone-500 text-center text-[10px] font-bold uppercase tracking-widest py-2 rounded border border-stone-200 dark:border-stone-800/30 group-hover:bg-stone-100 dark:group-hover:bg-stone-800/50 transition-colors">Canceled by You</div>
                     @endif
-                </div>
+                </a>
                 @endforeach
             </div>
         </div>
