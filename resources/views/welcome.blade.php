@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Artisan Platform') }} - Home</title>
+    <title>{{ config('app.name', 'Artisan Platform') }} - Dashboard</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,7 +50,7 @@
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#home"
-                        class="text-sm font-bold tracking-wider text-stone-600 hover:text-amber-700 transition uppercase">Home</a>
+                        class="text-sm font-bold tracking-wider text-stone-600 hover:text-amber-700 transition uppercase">Dashboard</a>
                     <a href="#features"
                         class="text-sm font-bold tracking-wider text-stone-600 hover:text-amber-700 transition uppercase">How
                         It Works</a>

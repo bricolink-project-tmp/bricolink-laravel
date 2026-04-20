@@ -25,26 +25,26 @@
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
     </style>
 </head>
-<body class="antialiased bg-stone-50 text-stone-900 dark:bg-[#0c0a09] dark:text-[#d6d3d1] selection:bg-amber-700 selection:text-white pb-32 md:pb-12 pt-24 md:pt-32 transition-colors duration-300">
+<body class="antialiased bg-stone-50 text-stone-900 selection:bg-amber-700 selection:text-white pb-32 md:pb-12 pt-24 md:pt-32 transition-colors duration-300">
 
-    <nav class="fixed top-0 w-full z-50 glass-card border-b border-stone-200 dark:border-b-0 dark:border-stone-800 transition-colors duration-300">
+    <nav class="fixed top-0 w-full z-50 glass-card border-b border-stone-200 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group">
                     <img src="{{ asset('images/logo.png') }}" alt="Artisan Platform Logo" class="h-10 w-auto rounded shadow-sm">
-                    <span class="font-heading text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Artisan <span class="text-amber-700 dark:text-amber-600 italic font-normal">Hub</span></span>
+                    <span class="font-heading text-2xl font-bold tracking-tight text-stone-900">Artisan <span class="text-amber-700 italic font-normal">Hub</span></span>
                 </a>
                 <div class="flex items-center space-x-6">
                     <!-- Theme Toggle -->
-                    <button id="theme-toggle" type="button" class="text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 focus:outline-none transition-colors">
+                    <button id="theme-toggle" type="button" class="text-stone-500 hover:text-amber-600 focus:outline-none transition-colors">
                         <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                         <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                     </button>
                     
-                    <span class="hidden sm:inline-block text-sm text-stone-500 dark:text-stone-400">Welcome, <span class="text-stone-900 dark:text-stone-200">{{ explode(' ', Auth::user()->name)[0] }}</span></span>
+                    <span class="hidden sm:inline-block text-sm text-stone-500">Welcome, <span class="text-stone-900">{{ explode(' ', Auth::user()->name)[0] }}</span></span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-xs font-bold tracking-widest uppercase text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors">Sign Out</button>
+                        <button type="submit" class="text-xs font-bold tracking-widest uppercase text-stone-500 hover:text-amber-700 transition-colors">Sign Out</button>
                     </form>
                 </div>
             </div>
@@ -61,25 +61,25 @@
 
         <header class="mb-12 mt-8 md:mt-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
-                <a href="{{ route('dashboard') }}" class="text-stone-500 hover:text-amber-600 dark:hover:text-amber-500 text-sm flex items-center gap-2 mb-6 transition-colors">
+                <a href="{{ route('dashboard') }}" class="text-stone-500 hover:text-amber-600 text-sm flex items-center gap-2 mb-6 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back to Dashboard
                 </a>
                 <div class="flex items-center gap-3 mb-2">
-                    <span class="bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-500 text-xs font-bold px-3 py-1 rounded uppercase tracking-widest">{{ str_replace('_', ' ', $booking->status) }}</span>
-                    <span class="text-stone-400 dark:text-stone-500 text-sm font-bold tracking-wider">{{ $booking->reference_id }}</span>
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded uppercase tracking-widest">{{ str_replace('_', ' ', $booking->status) }}</span>
+                    <span class="text-stone-400 text-sm font-bold tracking-wider">{{ $booking->reference_id }}</span>
                 </div>
-                <h1 class="font-heading text-4xl md:text-5xl text-stone-900 dark:text-stone-100 tracking-tight">{{ $booking->title ?? 'Custom Request' }}</h1>
+                <h1 class="font-heading text-4xl md:text-5xl text-stone-900 tracking-tight">{{ $booking->title ?? 'Custom Request' }}</h1>
             </div>
-            <div class="flex items-center gap-4 bg-white dark:bg-stone-900/50 p-4 rounded-xl border border-stone-200 dark:border-stone-800">
+            <div class="flex items-center gap-4 bg-white p-4 rounded-xl border border-stone-200">
             @if($booking->artisan->user->profile_pic)
-                <img src="{{ asset('storage/' . $booking->artisan->user->profile_pic) }}" alt="Profile" class="w-12 h-12 rounded-full object-cover border border-stone-200 dark:border-stone-700">
+                <img src="{{ asset('storage/' . $booking->artisan->user->profile_pic) }}" alt="Profile" class="w-12 h-12 rounded-full object-cover border border-stone-200">
             @else
-                <div class="w-12 h-12 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-sm flex items-center justify-center font-bold text-stone-500">{{ substr($booking->artisan->user->name, 0, 2) }}</div>
+                <div class="w-12 h-12 rounded-full bg-stone-100 border border-stone-200 text-sm flex items-center justify-center font-bold text-stone-500">{{ substr($booking->artisan->user->name, 0, 2) }}</div>
             @endif
                 <div>
-                    <div class="text-[10px] text-stone-500 dark:text-stone-400 uppercase font-bold tracking-widest mb-0.5">Artisan</div>
-                    <div class="font-bold text-stone-900 dark:text-stone-100 text-sm">{{ $booking->artisan->user->name }}</div>
+                    <div class="text-[10px] text-stone-500 uppercase font-bold tracking-widest mb-0.5">Artisan</div>
+                    <div class="font-bold text-stone-900 text-sm">{{ $booking->artisan->user->name }}</div>
                 </div>
             </div>
         </header>
@@ -89,17 +89,17 @@
             <div class="md:col-span-2 space-y-8">
                 <!-- Request Description -->
                 <section class="glass-card rounded-xl p-8 md:p-10 shadow-sm relative z-10">
-                    <h2 class="font-heading text-2xl text-stone-900 dark:text-stone-100 mb-6 border-b border-stone-200 dark:border-stone-800 pb-4">Vision & Requirements</h2>
-                    <p class="text-stone-600 dark:text-stone-400 leading-relaxed whitespace-pre-wrap">{{ $booking->description }}</p>
+                    <h2 class="font-heading text-2xl text-stone-900 mb-6 border-b border-stone-200 pb-4">Vision & Requirements</h2>
+                    <p class="text-stone-600 leading-relaxed whitespace-pre-wrap">{{ $booking->description }}</p>
                 </section>
 
                 <!-- References Gallery -->
                 @if($booking->reference_images && count($booking->reference_images) > 0)
                 <section class="glass-card rounded-xl p-8 md:p-10 shadow-sm">
-                    <h2 class="font-heading text-2xl text-stone-900 dark:text-stone-100 mb-6 border-b border-stone-200 dark:border-stone-800 pb-4">Inspiration Images</h2>
+                    <h2 class="font-heading text-2xl text-stone-900 mb-6 border-b border-stone-200 pb-4">Inspiration Images</h2>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         @foreach($booking->reference_images as $imagePath)
-                            <a href="{{ asset('storage/' . $imagePath) }}" target="_blank" class="block aspect-square rounded-lg overflow-hidden bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 group cursor-zoom-in relative">
+                            <a href="{{ asset('storage/' . $imagePath) }}" target="_blank" class="block aspect-square rounded-lg overflow-hidden bg-stone-100 border border-stone-200 group cursor-zoom-in relative">
                                 <img src="{{ asset('storage/' . $imagePath) }}" alt="Reference Image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                                 <div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors flex items-center justify-center">
                                     <span class="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md">open_in_new</span>
@@ -112,30 +112,30 @@
 
                 <!-- Chat Interface -->
                 @if(in_array($booking->status, ['in_discussion', 'artisan_approved', 'booked', 'artisan_completed', 'completed', 'canceled', 'archived', 'rejected_by_client', 'rejected_by_artisan']))
-                <section class="glass-card rounded-xl shadow-sm flex flex-col h-[500px] border border-stone-200 dark:border-stone-800 relative z-20">
-                    <div class="p-4 border-b border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/50 rounded-t-xl">
-                        <h2 class="font-heading text-lg text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                <section class="glass-card rounded-xl shadow-sm flex flex-col h-[500px] border border-stone-200 relative z-20">
+                    <div class="p-4 border-b border-stone-200 bg-stone-50/50 rounded-t-xl">
+                        <h2 class="font-heading text-lg text-stone-900 flex items-center gap-2">
                             <span class="material-symbols-outlined text-amber-600">forum</span> Deal Room Chat
                         </h2>
                     </div>
                     
-                    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-stone-50/30 dark:bg-[#0c0a09]/30">
+                    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-stone-50/30">
                         <div class="flex justify-center items-center h-full">
                             <div class="w-6 h-6 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     </div>
 
                     @if(in_array($booking->status, ['in_discussion', 'artisan_approved', 'booked']))
-                    <div class="p-4 border-t border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/90 rounded-b-xl">
+                    <div class="p-4 border-t border-stone-200 bg-white rounded-b-xl">
                         <form id="chat-form" class="flex gap-2">
-                            <input type="text" id="chat-input" class="flex-1 bg-stone-100 dark:bg-stone-800 border-none rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-amber-500 text-stone-900 dark:text-stone-100 placeholder:text-stone-500 transition-shadow" placeholder="Type your message..." autocomplete="off">
+                            <input type="text" id="chat-input" class="flex-1 bg-stone-100 border-none rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-amber-500 text-stone-900 placeholder:text-stone-500 transition-shadow" placeholder="Type your message..." autocomplete="off">
                             <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white p-2 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50" id="chat-submit">
                                 <span class="material-symbols-outlined text-[20px]">send</span>
                             </button>
                         </form>
                     </div>
                     @else
-                    <div class="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-100 dark:bg-stone-900/50 rounded-b-xl text-center text-[10px] text-stone-500 font-bold uppercase tracking-widest">
+                    <div class="p-4 border-t border-stone-200 bg-stone-100 rounded-b-xl text-center text-[10px] text-stone-500 font-bold uppercase tracking-widest">
                         Chat is closed
                     </div>
                     @endif
@@ -145,28 +145,28 @@
 
             <!-- Logistics Sidebar -->
             <div class="space-y-6">
-                <section class="bg-stone-100 dark:bg-stone-900/50 rounded-xl p-6 md:p-8 border border-stone-200 dark:border-stone-800">
-                    <h3 class="font-heading text-xl text-stone-900 dark:text-stone-100 mb-6 border-b border-stone-200 dark:border-stone-800 pb-3">Logistics</h3>
+                <section class="bg-stone-100 rounded-xl p-6 md:p-8 border border-stone-200">
+                    <h3 class="font-heading text-xl text-stone-900 mb-6 border-b border-stone-200 pb-3">Logistics</h3>
                     
                     <div class="space-y-5">
                         <div>
-                            <div class="text-[10px] font-bold uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-1">Target Date</div>
-                            <div class="font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-amber-600 dark:text-amber-500 text-lg">calendar_month</span>
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-1">Target Date</div>
+                            <div class="font-bold text-stone-900 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-amber-600 text-lg">calendar_month</span>
                                 {{ \Carbon\Carbon::parse($booking->scheduled_date)->format('F j, Y') }}
                             </div>
                         </div>
                         <div>
-                            <div class="text-[10px] font-bold uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-1">Proposed Budget</div>
-                            <div class="font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-500 text-lg">payments</span>
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-1">Proposed Budget</div>
+                            <div class="font-bold text-stone-900 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-emerald-600 text-lg">payments</span>
                                 {{ $booking->budget_range ?? 'Not specified' }}
                             </div>
                         </div>
                         <div>
-                            <div class="text-[10px] font-bold uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-1">Delivery Location</div>
-                            <div class="font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-sky-600 dark:text-sky-500 text-lg">location_on</span>
+                            <div class="text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-1">Delivery Location</div>
+                            <div class="font-bold text-stone-900 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sky-600 text-lg">location_on</span>
                                 {{ $booking->location ?? 'Not specified' }}
                             </div>
                         </div>
@@ -175,27 +175,27 @@
 
                 <!-- Actions -->
                 @if($booking->status === 'pending')
-                <div class="glass-card rounded-xl p-6 border border-amber-200 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-900/10">
-                    <div class="flex items-center gap-3 text-amber-700 dark:text-amber-500 mb-2">
+                <div class="glass-card rounded-xl p-6 border border-amber-200 bg-amber-50/50">
+                    <div class="flex items-center gap-3 text-amber-700 mb-2">
                         <span class="material-symbols-outlined text-2xl">hourglass_empty</span>
                         <h3 class="text-[10px] font-bold uppercase tracking-widest">Awaiting Artisan Response</h3>
                     </div>
-                    <p class="text-[11px] text-stone-600 dark:text-stone-400">The artisan has received your request and will respond shortly.</p>
+                    <p class="text-[11px] text-stone-600">The artisan has received your request and will respond shortly.</p>
                 </div>
                 @elseif($booking->status === 'in_discussion')
-                <div class="glass-card rounded-xl p-6 border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/50 relative z-20">
-                    <div class="flex items-center gap-3 text-stone-700 dark:text-stone-300 mb-2">
+                <div class="glass-card rounded-xl p-6 border border-stone-200 bg-stone-50/50 relative z-20">
+                    <div class="flex items-center gap-3 text-stone-700 mb-2">
                         <span class="material-symbols-outlined text-2xl">forum</span>
                         <h3 class="text-[10px] font-bold uppercase tracking-widest">Active Chat</h3>
                     </div>
-                    <p class="text-[11px] text-stone-600 dark:text-stone-400">You are discussing the details with the artisan. They will send a final quote when ready.</p>
+                    <p class="text-[11px] text-stone-600">You are discussing the details with the artisan. They will send a final quote when ready.</p>
                 </div>
                 @elseif($booking->status === 'artisan_approved')
                 <div class="glass-card rounded-xl p-6 border-t-4 border-t-amber-500 shadow-sm relative z-30">
-                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-500 mb-2">Review Final Quote</h3>
-                    <p class="text-xs text-stone-600 dark:text-stone-400 mb-4">The artisan proposed a final price of <strong class="text-stone-900 dark:text-stone-100">${{ number_format($booking->price, 2) }}</strong>.</p>
-                    <div class="bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-3 mb-4">
-                        <p class="text-xs text-stone-600 dark:text-stone-400 italic">"{{ $booking->final_terms }}"</p>
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-amber-700 mb-2">Review Final Quote</h3>
+                    <p class="text-xs text-stone-600 mb-4">The artisan proposed a final price of <strong class="text-stone-900">${{ number_format($booking->price, 2) }}</strong>.</p>
+                    <div class="bg-stone-50 border border-stone-200 rounded p-3 mb-4">
+                        <p class="text-xs text-stone-600 italic">"{{ $booking->final_terms }}"</p>
                     </div>
                     
                     <div class="flex flex-col gap-2">
@@ -207,45 +207,45 @@
                         </form>
                         <form action="{{ route('booking.client.decline', $booking->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="w-full bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold uppercase tracking-widest py-3 px-4 rounded text-[10px] transition-colors flex justify-center items-center gap-2">
+                            <button type="submit" class="w-full bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold uppercase tracking-widest py-3 px-4 rounded text-[10px] transition-colors flex justify-center items-center gap-2">
                                 <span class="material-symbols-outlined text-[16px]">cancel</span> Decline Terms
                             </button>
                         </form>
                     </div>
                 </div>
                 @elseif($booking->status === 'booked')
-                <div class="glass-card rounded-xl p-6 border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-900/10">
-                    <div class="flex items-center gap-3 text-emerald-700 dark:text-emerald-500 mb-2">
+                <div class="glass-card rounded-xl p-6 border border-emerald-200 bg-emerald-50/50">
+                    <div class="flex items-center gap-3 text-emerald-700 mb-2">
                         <span class="material-symbols-outlined text-2xl">construction</span>
                         <h3 class="text-[10px] font-bold uppercase tracking-widest">Work in Progress</h3>
                     </div>
-                    <p class="text-[11px] text-stone-600 dark:text-stone-400">The artisan is currently working on your request. They will notify you here when it is complete.</p>
+                    <p class="text-[11px] text-stone-600">The artisan is currently working on your request. They will notify you here when it is complete.</p>
                 </div>
                 @elseif($booking->status === 'artisan_completed')
                 <div class="glass-card rounded-xl p-6 border-t-4 border-t-amber-500 shadow-sm relative z-30">
-                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-500 mb-2">Verify Work</h3>
-                    <p class="text-[11px] text-stone-600 dark:text-stone-400 mb-4">The artisan marked this job as completed. Please verify the work and leave a rating to close the deal.</p>
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-amber-700 mb-2">Verify Work</h3>
+                    <p class="text-[11px] text-stone-600 mb-4">The artisan marked this job as completed. Please verify the work and leave a rating to close the deal.</p>
                     
                     <form action="{{ route('booking.client.verify', $booking->id) }}" method="POST" class="space-y-4">
                         @csrf
                         <input type="hidden" name="status" value="completed">
                         <div>
-                            <label class="block text-[10px] uppercase font-bold text-stone-600 dark:text-stone-400 mb-2">Your Rating</label>
+                            <label class="block text-[10px] uppercase font-bold text-stone-600 mb-2">Your Rating</label>
                             <style>
                                 .star-rating input:checked ~ label { color: #f59e0b; }
                                 .star-rating label:hover, .star-rating label:hover ~ label { color: #f59e0b; }
                             </style>
                             <div class="flex flex-row-reverse justify-end items-center gap-1 star-rating">
                                 <input type="radio" name="rating" id="star5" value="5" class="hidden" required />
-                                <label for="star5" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <label for="star5" class="cursor-pointer text-stone-300 material-symbols-outlined text-[32px] transition-colors">star</label>
                                 <input type="radio" name="rating" id="star4" value="4" class="hidden" />
-                                <label for="star4" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <label for="star4" class="cursor-pointer text-stone-300 material-symbols-outlined text-[32px] transition-colors">star</label>
                                 <input type="radio" name="rating" id="star3" value="3" class="hidden" />
-                                <label for="star3" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <label for="star3" class="cursor-pointer text-stone-300 material-symbols-outlined text-[32px] transition-colors">star</label>
                                 <input type="radio" name="rating" id="star2" value="2" class="hidden" />
-                                <label for="star2" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <label for="star2" class="cursor-pointer text-stone-300 material-symbols-outlined text-[32px] transition-colors">star</label>
                                 <input type="radio" name="rating" id="star1" value="1" class="hidden" />
-                                <label for="star1" class="cursor-pointer text-stone-300 dark:text-stone-700 material-symbols-outlined text-[32px] transition-colors">star</label>
+                                <label for="star1" class="cursor-pointer text-stone-300 material-symbols-outlined text-[32px] transition-colors">star</label>
                             </div>
                         </div>
                         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest py-3 px-4 rounded text-[10px] transition-colors shadow-sm flex justify-center items-center gap-2">
@@ -254,28 +254,28 @@
                     </form>
                 </div>
                 @elseif($booking->status === 'completed')
-                <div class="glass-card rounded-xl p-6 border-l-4 border-l-emerald-500 bg-white dark:bg-stone-900/50">
-                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-4">Job Completed</h3>
+                <div class="glass-card rounded-xl p-6 border-l-4 border-l-emerald-500 bg-white">
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-4">Job Completed</h3>
                     <div class="text-center">
                         <div class="text-3xl text-emerald-500 mb-1 font-bold">{{ $booking->rating }} ★</div>
                         <div class="text-[10px] uppercase font-bold text-stone-400 tracking-widest">Your Rating</div>
                     </div>
                 </div>
                 @elseif($booking->status === 'rejected_by_client')
-                <div class="glass-card rounded-xl p-6 border-l-4 border-l-stone-500 bg-stone-50 dark:bg-stone-900/50">
-                    <div class="flex items-center gap-3 text-stone-700 dark:text-stone-400 mb-2">
+                <div class="glass-card rounded-xl p-6 border-l-4 border-l-stone-500 bg-stone-50">
+                    <div class="flex items-center gap-3 text-stone-700 mb-2">
                         <span class="material-symbols-outlined text-2xl">cancel</span>
                         <h3 class="text-[10px] font-bold uppercase tracking-widest">Declined by You</h3>
                     </div>
-                    <p class="text-[11px] text-stone-600 dark:text-stone-500 mb-4">You declined the final quote for this request.</p>
+                    <p class="text-[11px] text-stone-600 mb-4">You declined the final quote for this request.</p>
                 </div>
                 @elseif($booking->status === 'rejected_by_artisan')
-                <div class="glass-card rounded-xl p-6 border border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-900/10">
-                    <div class="flex items-center gap-3 text-red-700 dark:text-red-500 mb-2">
+                <div class="glass-card rounded-xl p-6 border border-red-200 bg-red-50/50">
+                    <div class="flex items-center gap-3 text-red-700 mb-2">
                         <span class="material-symbols-outlined text-2xl">cancel</span>
                         <h3 class="text-[10px] font-bold uppercase tracking-widest">Declined by Artisan</h3>
                     </div>
-                    <p class="text-[11px] text-stone-600 dark:text-stone-400">The artisan was unable to accept this request.</p>
+                    <p class="text-[11px] text-stone-600">The artisan was unable to accept this request.</p>
                 </div>
                 @endif
             </div>
@@ -351,7 +351,7 @@
                 bubble.className = `max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
                     isMe 
                     ? 'bg-amber-600 text-white rounded-br-none' 
-                    : 'bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700 rounded-bl-none'
+                    : 'bg-white text-stone-800 border border-stone-200 rounded-bl-none'
                 }`;
                 bubble.textContent = msg.message;
                 

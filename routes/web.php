@@ -9,14 +9,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register')->middleware('guest');
-Route::post('/register', [AuthController::class, 'register']);
-
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
@@ -47,3 +39,4 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/booking/{booking}/messages', [App\Http\Controllers\MessageController::class, 'index'])->name('api.messages.index');
     Route::post('/api/booking/{booking}/messages', [App\Http\Controllers\MessageController::class, 'store'])->name('api.messages.store');
 });
+require __DIR__.'/auth.php';

@@ -31,30 +31,46 @@
             <p class="text-stone-500 text-sm">Please enter your details to sign in.</p>
         </div>
 
-        <form action="/login" method="POST" class="space-y-6">
+        <!-- Session Status -->
+        @if (session('status'))
+            <div class="mb-4 font-medium text-sm text-emerald-600">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        <form action="{{ route('login') }}" method="POST" class="space-y-6">
             @csrf
+            
             <div>
                 <label for="email" class="block text-xs font-bold tracking-widest text-stone-500 uppercase mb-2">Email address</label>
-                <input id="email" name="email" type="email" autocomplete="email" required class="w-full px-4 py-3 border border-stone-300 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 outline-none transition-all placeholder:text-stone-400 bg-stone-50" placeholder="you@example.com">
+                <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" required class="w-full px-4 py-3 border {{ $errors->has('email') ? 'border-red-500' : 'border-stone-300' }} focus:border-amber-600 focus:ring-1 focus:ring-amber-600 outline-none transition-all placeholder:text-stone-400 bg-stone-50" placeholder="you@example.com">
+                @error('email')
+                    <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>
                 <label for="password" class="block text-xs font-bold tracking-widest text-stone-500 uppercase mb-2">Password</label>
-                <input id="password" name="password" type="password" autocomplete="current-password" required class="w-full px-4 py-3 border border-stone-300 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 outline-none transition-all placeholder:text-stone-400 bg-stone-50" placeholder="••••••••">
+                <input id="password" name="password" type="password" autocomplete="current-password" required class="w-full px-4 py-3 border {{ $errors->has('password') ? 'border-red-500' : 'border-stone-300' }} focus:border-amber-600 focus:ring-1 focus:ring-amber-600 outline-none transition-all placeholder:text-stone-400 bg-stone-50" placeholder="••••••••">
+                @error('password')
+                    <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-amber-700 focus:ring-amber-600 border-stone-300 rounded-sm">
-                    <label for="remember-me" class="ml-2 block text-sm text-stone-600">
+                    <input id="remember_me" name="remember" type="checkbox" class="h-4 w-4 text-amber-700 focus:ring-amber-600 border-stone-300 rounded-sm">
+                    <label for="remember_me" class="ml-2 block text-sm text-stone-600">
                         Remember me
                     </label>
                 </div>
 
                 <div class="text-sm border-b border-transparent hover:border-amber-700 transition-colors pb-0.5">
-                    <a href="#" class="font-bold text-stone-500 hover:text-amber-700 transition-colors uppercase tracking-wider text-xs">
-                        Forgot password?
-                    </a>
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" class="font-bold text-stone-500 hover:text-amber-700 transition-colors uppercase tracking-wider text-xs">
+                            Forgot password?
+                        </a>
+                    @endif
                 </div>
             </div>
 
