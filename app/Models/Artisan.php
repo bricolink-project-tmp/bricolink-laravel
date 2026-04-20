@@ -15,6 +15,7 @@ class Artisan extends Model
         'craft_type',
         'is_available',
         'cover_image_path',
+        'profile_views',
     ];
 
     protected $casts = [

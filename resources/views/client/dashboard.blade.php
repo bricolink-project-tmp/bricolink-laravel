@@ -128,7 +128,7 @@
                         <h4 class="font-bold text-stone-900 truncate group-hover:text-amber-700 transition-colors">{{ $booking->title ?? 'Custom Request' }}</h4>
                         <span class="text-[10px] font-mono font-bold text-stone-400">{{ $booking->reference_id }}</span>
                     </div>
-                    <div class="text-[10px] text-stone-500 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name }}</div>
+                    <div class="text-[10px] text-stone-500 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name ?? 'Artisan' }}</div>
                     @if($booking->budget_range || $booking->location)
                         <div class="flex flex-wrap gap-2 mb-3">
                             @if($booking->budget_range) <span class="bg-stone-100 text-stone-600 text-[9px] px-1.5 py-0.5 rounded">{{ $booking->budget_range }}</span> @endif
@@ -162,7 +162,7 @@
                         <h4 class="font-bold text-stone-900 truncate group-hover:text-emerald-700 transition-colors">{{ $booking->title ?? 'Custom Request' }}</h4>
                         <span class="text-[10px] font-mono font-bold text-stone-400">{{ $booking->reference_id }}</span>
                     </div>
-                    <div class="text-[10px] text-stone-500 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name }}</div>
+                    <div class="text-[10px] text-stone-500 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name ?? 'Artisan' }}</div>
                     <p class="text-xs text-stone-500 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
                     
                     <div class="w-full border border-emerald-200 text-center text-emerald-600 text-[10px] font-bold uppercase tracking-widest py-2 rounded bg-emerald-50/50 group-hover:bg-emerald-100 transition-colors">Done ({{ $booking->rating }} ★)</div>
@@ -189,7 +189,7 @@
                         <h4 class="font-bold text-stone-900 truncate group-hover:text-red-700 transition-colors">{{ $booking->title ?? 'Custom Request' }}</h4>
                         <span class="text-[10px] font-mono font-bold text-stone-400">{{ $booking->reference_id }}</span>
                     </div>
-                    <div class="text-[10px] text-stone-500 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name }}</div>
+                    <div class="text-[10px] text-stone-500 mb-2 uppercase tracking-widest font-bold">with {{ $booking->artisan->user->name ?? 'Artisan' }}</div>
                     <p class="text-xs text-stone-500 line-clamp-2 mb-4 leading-relaxed">{{ $booking->description }}</p>
                     
                     @if($booking->status === 'canceled')

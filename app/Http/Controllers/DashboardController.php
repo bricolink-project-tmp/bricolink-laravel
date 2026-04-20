@@ -14,6 +14,17 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if ($user->role === 'artisan') {
+            // Ensure the artisan profile exists (safety for old users)
+            if (!$user->artisan) {
+                $user->artisan()->create([
+                    'craft_type' => 'Not Specified',
+                    'bio' => null,
+                    'is_available' => false,
+                    'profile_views' => 0,
+                ]);
+                $user->load('artisan');
+            }
+
             $user->load(['artisan.portfolioImages', 'artisan.bookings.user']);
             return view('artisan.dashboard', compact('user'));
         }

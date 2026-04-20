@@ -45,6 +45,15 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
         ]);
 
+        if ($user->role === 'artisan') {
+            $user->artisan()->create([
+                'craft_type' => 'Not Specified',
+                'bio' => null,
+                'is_available' => false,
+                'profile_views' => 0,
+            ]);
+        }
+
         event(new Registered($user));
 
         Auth::login($user);

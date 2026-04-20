@@ -82,13 +82,14 @@
     <!-- Main Content -->
     <main class="pt-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         @php
-            $pendingJobs = $user->artisan->bookings->where('status', 'pending');
-            $discussionJobs = $user->artisan->bookings->whereIn('status', ['in_discussion', 'artisan_approved', 'rejected_by_client']);
-            $bookedJobs = $user->artisan->bookings->whereIn('status', ['booked', 'artisan_completed']);
-            $archivedJobs = $user->artisan->bookings->whereIn('status', ['completed', 'canceled', 'rejected_by_artisan', 'archived'])->sortByDesc('created_at');
+            $artisan = $user->artisan;
+            $pendingJobs = $artisan ? $artisan->bookings->where('status', 'pending') : collect();
+            $discussionJobs = $artisan ? $artisan->bookings->whereIn('status', ['in_discussion', 'artisan_approved', 'rejected_by_client']) : collect();
+            $bookedJobs = $artisan ? $artisan->bookings->whereIn('status', ['booked', 'artisan_completed']) : collect();
+            $archivedJobs = $artisan ? $artisan->bookings->whereIn('status', ['completed', 'canceled', 'rejected_by_artisan', 'archived'])->sortByDesc('created_at') : collect();
             $newInquiriesCount = $pendingJobs->count();
             
-            $completedWithRatings = $user->artisan->bookings->whereNotNull('rating');
+            $completedWithRatings = $artisan ? $artisan->bookings->whereNotNull('rating') : collect();
             $avgRating = $completedWithRatings->count() > 0 ? round($completedWithRatings->avg('rating'), 1) : 'New';
             $reviewCount = $completedWithRatings->count();
         @endphp
@@ -120,7 +121,7 @@
                 <h2 class="font-heading text-4xl font-bold text-stone-900">Your Impact Pipeline</h2>
             </div>
             
-            @php $isProfileIncomplete = empty(trim($user->artisan->bio)) || $user->artisan->craft_type === 'Not Specified'; @endphp
+            @php $isProfileIncomplete = $artisan ? (empty(trim($artisan->bio)) || $artisan->craft_type === 'Not Specified') : true; @endphp
             
             @if($isProfileIncomplete)
             <!-- Locked Availability Switch -->
@@ -140,14 +141,14 @@
             </div>
             @else
             <!-- Glowing Availability Switch (Triggers Modal) -->
-            <div id="availability-trigger" class="glass-card p-4 flex items-center gap-6 rounded-lg border border-stone-200 hover:border-amber-400 transition-colors cursor-pointer {{ $user->artisan->is_available ? 'glow-amber border-amber-200 bg-amber-50' : '' }}">
+            <div id="availability-trigger" class="glass-card p-4 flex items-center gap-6 rounded-lg border border-stone-200 hover:border-amber-400 transition-colors cursor-pointer {{ ($artisan && $artisan->is_available) ? 'glow-amber border-amber-200 bg-amber-50' : '' }}">
                 <div class="text-right pointer-events-none">
-                    <div class="text-sm font-bold uppercase tracking-widest leading-tight {{ $user->artisan->is_available ? 'text-amber-700' : 'text-stone-500' }}">Available For Hire</div>
-                    <div class="text-stone-500 text-xs">{{ $user->artisan->is_available ? 'Visible in client feed' : 'Hidden from clients' }}</div>
+                    <div class="text-sm font-bold uppercase tracking-widest leading-tight {{ ($artisan && $artisan->is_available) ? 'text-amber-700' : 'text-stone-500' }}">Available For Hire</div>
+                    <div class="text-stone-500 text-xs">{{ ($artisan && $artisan->is_available) ? 'Visible in client feed' : 'Hidden from clients' }}</div>
                 </div>
                 <!-- Toggle UI (Visual Only, input is pointer-events-none) -->
                 <div class="relative inline-block w-14 mr-2 align-middle select-none transition duration-200 ease-in pointer-events-none">
-                    <input type="checkbox" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-stone-100 border-4 appearance-none z-10 top-0.5 transition-transform" {{ $user->artisan->is_available ? 'checked' : '' }}/>
+                    <input type="checkbox" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-stone-100 border-4 appearance-none z-10 top-0.5 transition-transform" {{ ($artisan && $artisan->is_available) ? 'checked' : '' }}/>
                     <label class="toggle-label block overflow-hidden h-7 rounded-full bg-stone-200 border border-stone-300 shadow-inner"></label>
                 </div>
             </div>
@@ -159,7 +160,7 @@
             <div class="glass-card rounded-lg p-6 border border-stone-200 hover:border-amber-400 transition-colors relative overflow-hidden group shadow-sm">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all"></div>
                 <div class="text-stone-500 text-xs font-bold uppercase tracking-widest mb-2">Profile Views (Total)</div>
-                <div class="font-heading text-4xl font-bold text-amber-700 mb-2">{{ number_format($user->artisan->profile_views) }}</div>
+                <div class="font-heading text-4xl font-bold text-amber-700 mb-2">{{ $artisan ? number_format($artisan->profile_views) : 0 }}</div>
             </div>
             <div class="glass-card rounded-lg p-6 border border-stone-200 hover:border-amber-400 transition-colors relative overflow-hidden group shadow-sm">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all"></div>
@@ -345,7 +346,7 @@
         <div>
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 <!-- Existing Images -->
-                @foreach($user->artisan->portfolioImages as $image)
+                @foreach($artisan ? $artisan->portfolioImages : [] as $image)
                 <div class="relative group aspect-square rounded-lg overflow-hidden border border-stone-200">
                     <img src="{{ asset('storage/' . $image->image_path) }}" alt="Portfolio piece" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-stone-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -364,7 +365,7 @@
                 @endforeach
 
                 <!-- Upload Form Zone -->
-                @if($user->artisan->portfolioImages->count() < 5)
+                @if($artisan && $artisan->portfolioImages->count() < 5)
                 <form action="{{ route('artisan.portfolio.upload') }}" method="POST" enctype="multipart/form-data" class="aspect-square glass-card rounded-lg flex flex-col items-center justify-center text-center hover:border-amber-500 hover:bg-stone-50 transition-colors cursor-pointer group border-dashed border-2 relative">
                     @csrf
                     <input type="file" name="portfolio_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="this.form.submit()">
@@ -390,7 +391,7 @@
                 </div>
                 <h3 class="font-heading text-2xl font-bold text-stone-900 mb-2">Change Availability?</h3>
                 <p class="text-sm text-stone-600 mb-8">
-                    {{ $user->artisan->is_available ? 'You will be hidden from the Client Discovery Feed and will not receive new requests.' : 'You will become visible on the Client Discovery Feed and can receive new job requests.' }}
+                    {{ ($artisan && $artisan->is_available) ? 'You will be hidden from the Client Discovery Feed and will not receive new requests.' : 'You will become visible on the Client Discovery Feed and can receive new job requests.' }}
                 </p>
                 <form action="{{ route('artisan.availability.toggle') }}" method="POST">
                     @csrf

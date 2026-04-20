@@ -60,7 +60,7 @@ class User extends Authenticatable
 
     public function artisan()
     {
-        return $this->hasOne(Artisan::class, 'artisan_id', 'id');
+        return $this->hasOne(Artisan::class, 'artisan_id');
     }
 
     public function bookings()
