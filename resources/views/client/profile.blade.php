@@ -86,9 +86,9 @@
                                 Request Pending
                             </button>
                         @elseif($artisanUser->artisan->is_available)
-                            <button onclick="document.getElementById('quote-modal').classList.remove('hidden')" class="w-full bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold tracking-widest uppercase py-4 rounded transition-colors shadow-sm text-center block">
+                            <a href="{{ route('booking.create', $artisanUser->id) }}" class="w-full bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold tracking-widest uppercase py-4 rounded transition-colors shadow-sm text-center block">
                                 Request Quote
-                            </button>
+                            </a>
                         @else
                             <button class="w-full bg-stone-300 text-stone-500 text-xs font-bold tracking-widest uppercase py-4 rounded cursor-not-allowed text-center block" disabled>
                                 Artisan is Busy
@@ -114,33 +114,6 @@
             @endforelse
         </div>
     </main>
-
-    <!-- Quote Modal -->
-    @if($artisanUser->artisan->is_available)
-    <div id="quote-modal" class="fixed inset-0 z-[100] hidden items-center justify-center flex">
-        <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
-        <div class="relative w-full max-w-lg mx-4 glass-card rounded-2xl p-8 shadow-2xl z-10">
-            <h3 class="font-heading text-2xl font-bold text-stone-900 mb-2">Request Quote from {{ $artisanUser->name }}</h3>
-            <p class="text-sm text-stone-500 mb-6">Describe your project requirements and preferred timeline.</p>
-            
-            <form action="{{ route('booking.store', $artisanUser->id) }}" method="POST">
-                @csrf
-                <div class="mb-5">
-                    <label class="block text-xs font-bold uppercase tracking-widest text-stone-600 mb-2">Project Description</label>
-                    <textarea name="description" rows="4" class="w-full bg-stone-50 border border-stone-200 rounded p-4 text-sm text-stone-800 focus:outline-none focus:border-amber-500 transition-colors" placeholder="I need a custom oak dining table..." required></textarea>
-                </div>
-                <div class="mb-8">
-                    <label class="block text-xs font-bold uppercase tracking-widest text-stone-600 mb-2">Desired Timeline (Date)</label>
-                    <input type="date" name="scheduled_date" class="w-full bg-stone-50 border border-stone-200 rounded p-4 text-sm text-stone-800 focus:outline-none focus:border-amber-500 transition-colors" required>
-                </div>
-                <div class="flex gap-4">
-                    <button type="button" onclick="document.getElementById('quote-modal').classList.add('hidden')" class="flex-1 px-4 py-3 bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold uppercase tracking-widest rounded transition-colors">Cancel</button>
-                    <button type="submit" class="flex-1 px-4 py-3 bg-amber-700 hover:bg-amber-800 text-stone-50 text-xs font-bold uppercase tracking-widest rounded transition-colors shadow-sm">Send Request</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    @endif
 
     <script>
         const themeToggleBtn = document.getElementById('theme-toggle');
